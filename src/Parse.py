@@ -10,21 +10,26 @@ import utilspackage as util
 """
 
 def main() :
-    filePath = '../justTextENGL101/'
-    textFiles = os.listdir( filePath )
+    filePath = '../FYE-TEXT/101/'
+    parse_folder( filePath )
+    filePath = '../FYE-TEXT/102/'
+    parse_folder( filePath )
+
+def parse_folder( dirPath ) :
+    textFiles = os.listdir( dirPath )
     for assignmentName in textFiles :
         print 'Assignment Filename = ', assignmentName
-        assignment = util.openFileReturnString( filePath + assignmentName )
-        parse( assignment )
+        assignment = util.openFileReturnString( dirPath + assignmentName )
+        print_sentences( assignment )
 
-def parse( text ) :
-    paragraphs = text.split( '\n\n' )
+def print_sentences( assignment ) :
+    paragraphs = assignment.split( '\n\n' )
     for newPara in paragraphs :
         sentences = tokenize.sent_tokenize( newPara )
         for completeThought in sentences :
             print completeThought
         print '\n'
-    print '\n\n'
+    print '\n'
     return
 
 if __name__ == '__main__' :
