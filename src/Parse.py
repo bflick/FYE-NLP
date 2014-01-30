@@ -1,5 +1,6 @@
 #! /usr/bin/python
 
+from nltk.corpus.reader.plaintext import PlaintextCorpusReader
 from nltk import tokenize
 import os
 import sys
@@ -10,27 +11,40 @@ import utilspackage as util
 """
 
 def main() :
+    assignmentList = [] # to contain 101 and 102 files
+
     filePath = '../FYE-TEXT/101/'
-    parse_folder( filePath )
+    draftReader, finalReader = parse_folder( filePath )
+    numFiles = len( os.listdir( filePath ))
+
+    assert numFiles % 2 == 0
+
+    finalIdsSortedList = finalReader.fileids().sort()
+    draftIdsSortedList = draftReader.fileids().sort()
+    for i in range( numFiles / 2 ):
+        final = finalReader.paras( finalIdsSortedList[i] )
+        draft = draftReader.paras( draftIdsSortedList[i] )
+        assn = assignment( draft, final )
+        assignmentList.append( assn )
+
     filePath = '../FYE-TEXT/102/'
-    parse_folder( filePath )
+    draftReader, finalReader = parse_folder( filePath )
+    numFiles = len( os.listdir( filePath ))
 
-def parse_folder( dirPath ) :
-    textFiles = os.listdir( dirPath )
-    for assignmentName in textFiles :
-        print 'Assignment Filename = ', assignmentName
-        assignment = util.openFileReturnString( dirPath + assignmentName )
-        print_sentences( assignment )
+    assert numFiles % 2 == 0
 
-def print_sentences( assignment ) :
-    paragraphs = assignment.split( '\n\n' )
-    for newPara in paragraphs :
-        sentences = tokenize.sent_tokenize( newPara )
-        for completeThought in sentences :
-            print completeThought
-        print '\n'
-    print '\n'
-    return
+    finalIdsSortedList = finalReader.fileids().sort()
+    draftIdsSortedList = draftReader.fileids().sort()
+    for i in range( numFiles / 2 ):
+        final = finalReader.paras( finalIdsSortedList[i] )
+        draft = draftReader.paras( draftIdsSortedList[i] )
+        assn = assignment( draft, final )
+        assignmentList.append( assn )
+
+def parseFolder( dirPath ):
+    draftReader = PlaintextCorpusReader(dirPath, '[0-9]draft[0-9].txt')
+    finalReader = PlaintextCorpusReader(dirPath, '[0-9]final[0-9].txt')
+    return draftReader, finalReader
 
 if __name__ == '__main__' :
     main()
