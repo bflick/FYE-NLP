@@ -5,47 +5,44 @@ class assignment( object ) :
 
     @property
     def draft( self ):
-        return self.draft
+        return self.draftPaper
 
     @property
     def final( self ):
-        return self.final
+        return self.finalPaper
 
     @property
     def numEdits( self ):
-        return self.numEdits
+        return self.doDiff()
 
     @property
     def score( self ):
-        return self.score
+        return self._score
 
     @property
     def thesis( self ):
-        return self.thesis
+        return self._thesis
 
     @draft.setter
-    def setDraft( self, draftParas ):
-        self.draft = paper( draftParas )
+    def draft( self, draftParas ):
+        self.draftPaper = paper( draftParas )
 
     @final.setter
-    def setFinal( self, finalParas ):
-        self.final = paper( finalParas )
-
-    @numEdits.setter
-    def setNumEdits( self, edits ):
-        self.numEdits = edits
+    def final( self, finalParas ):
+        self.finalPaper = paper( finalParas )
 
     @score.setter
-    def setScore( self, val ):
-        self.score = val
+    def score( self, val ):
+        self._score = val
 
     @thesis.setter
-    def thesisSetter( self, ths ):
-        self.thesis = ths
+    def thesis( self, ths ):
+        self._thesis = ths
 
     def __init__( self, draft, final ):
-        self.draftParas = draft
-        self.finalParas = final
+        self.draftPaper = draft
+        self.finalPaper = final
+        self._score = 'unscored'
 
     def doDiff( self ):
-        self.numEdits = self.final.diff( self.draft )
+        return self.final.diff( self.draft )

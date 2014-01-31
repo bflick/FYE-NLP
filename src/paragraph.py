@@ -1,44 +1,76 @@
-from nltk import tokenize
+#from nltk import tokenize
+from __future__ import division
+from nltk.corpus import stopwords
+import utilspackage as util
 
 class paragraph( object ) :
 
     @property
-    def parentPaper( self ):
+    def parent( self ):
         return self.parentPaper
 
     @property
     def rawText( self ):
         rawText = ''
         for s in sentenceList:
-            rawText += s
+            rawText += s.rawText
         rawText += '\n'
+        return rawText
 
     @property
     def sentences( self ):
-        return self.sentences
+        return self.sentenceList
 
     @property
     def topic( self ):
-        return self.topic
+        return self._topic
 
     @topic.setter
-    def topicSetter( self, value ):
-        self.topic = value
+    def topic( self, value ):
+        self._topic = value
 
-    def __init__( self, parent, sentenceList ) :
+    def __init__( self, parent, sList ) :
         self.parentPaper = parent
-        self.index = 1
-        for s in sentenceList:
-            sentences.append( sentence(s) )
+        self._topic = ''
+        self.index = 0
+        for s in sList:
+            self.sentenceList.append( sentence(s) )
 
     def __iter__( self ):
         return self
 
     def next( self ):
+        ret = ''
         if self.index == len(sentenceList):
             raise StopIteration
+
+        ret = self.sentences[self.index]
         self.index += 1
-        return self.sentences[self.index - 1]
+        return ret
+
+    def contains( self, needle ):
+        matches = 0
+        goodwords = 0
+        haystack = self.sentenceList
+        blacklist = stopwords.words("english")
+        blacklist.join([',', '.', '!','?', ':', ';'])
+        needle = [x for x in needle if not x in blacklist]
+        for sentence in haystack:
+            for tkn in sentence:
+                if tkn in blacklist:
+                    sentence.remove(tkn)
+                else:
+                    goodwords += 1
+
+        for sentence in haystack:
+            for i, tkn in enumerate(sentence):
+                for j, x in enumerate(needle):
+                    if x is tkn and abs(i - j) < 5:
+                        matches += 1
+
+        if matches / goodwords > 0.7:
+            return True
+        return False
 
 """
     def parse( self ) :
