@@ -1,5 +1,6 @@
 import os
 import utilspackage as util
+from paper import paper
 
 class assignment( object ) :
 
@@ -23,14 +24,6 @@ class assignment( object ) :
     def thesis( self ):
         return self._thesis
 
-    @draft.setter
-    def draft( self, draftParas ):
-        self.draftPaper = paper( draftParas )
-
-    @final.setter
-    def final( self, finalParas ):
-        self.finalPaper = paper( finalParas )
-
     @score.setter
     def score( self, val ):
         self._score = val
@@ -40,9 +33,9 @@ class assignment( object ) :
         self._thesis = ths
 
     def __init__( self, draft, final ):
-        self.draftPaper = draft
-        self.finalPaper = final
+        self.draftPaper = paper( final )
+        self.finalPaper = paper( draft )
         self._score = 'unscored'
 
     def doDiff( self ):
-        return self.final.diff( self.draft )
+        return self.final.doDiff( self.draft )

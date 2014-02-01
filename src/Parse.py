@@ -20,18 +20,22 @@ def main() :
 
     assert numFiles % 2 == 0
 
-    print finalReader.fileids()[0]
-
     finalIdsSortedList = finalReader.fileids()
     draftIdsSortedList = draftReader.fileids()
 
-    print len(finalReader.fileids())
     for i in range(len(finalReader.fileids())):
         final = finalReader.paras( finalIdsSortedList[i] )
         draft = draftReader.paras( draftIdsSortedList[i] )
         assn = assignment( draft, final )
         assignmentList.append( assn )
 
+    print assignmentList[0].draft.rawText
+    print '\n'
+    print assignmentList[0].final.rawText
+
+    #print assignmentList[0].numEdits
+    print assignmentList[0].final.findNewSents(assignmentList[0].draft)
+"""
     filePath = '../FYE-TEXT/102/'
     draftReader, finalReader = parseFolder( filePath )
     numFiles = len( os.listdir( filePath ))
@@ -47,10 +51,14 @@ def main() :
         draft = draftReader.paras( draftIdsSortedList[i] )
         assn = assignment( draft, final )
         assignmentList.append( assn )
+"""
 
 def parseFolder( dirPath ):
-    draftReader = PlaintextCorpusReader(dirPath, '[0-9][0-9][0-9]draft[0-9].txt')
-    finalReader = PlaintextCorpusReader(dirPath, '[0-9][0-9][0-9]final[0-9].txt')
+#    draftReader = PlaintextCorpusReader(dirPath, '[0-9][0-9][0-9]draft[0-9].txt')
+#   finalReader = PlaintextCorpusReader(dirPath, '[0-9][0-9][0-9]final[0-9].txt')
+
+    draftReader = PlaintextCorpusReader(dirPath, '001draft[0-9].txt')
+    finalReader = PlaintextCorpusReader(dirPath, '001final[0-9].txt')
     return draftReader, finalReader
 
 if __name__ == '__main__' :

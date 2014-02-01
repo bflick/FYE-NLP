@@ -1,6 +1,7 @@
 #from nltk import tokenize
 from __future__ import division
 from nltk.corpus import stopwords
+from sentence import sentence
 import utilspackage as util
 
 class paragraph( object ) :
@@ -12,7 +13,7 @@ class paragraph( object ) :
     @property
     def rawText( self ):
         rawText = ''
-        for s in sentenceList:
+        for s in self.sentenceList:
             rawText += s.rawText
         rawText += '\n'
         return rawText
@@ -22,6 +23,10 @@ class paragraph( object ) :
         return self.sentenceList
 
     @property
+    def size( self ):
+        return self.numSents
+
+    @property
     def topic( self ):
         return self._topic
 
@@ -29,10 +34,12 @@ class paragraph( object ) :
     def topic( self, value ):
         self._topic = value
 
-    def __init__( self, parent, sList ) :
+    def __init__( self, parent, sList ):
+        self.numSents = len(sList)
         self.parentPaper = parent
         self._topic = ''
         self.index = 0
+        self.sentenceList = []
         for s in sList:
             self.sentenceList.append( sentence(s) )
 
@@ -41,35 +48,30 @@ class paragraph( object ) :
 
     def next( self ):
         ret = ''
-        if self.index == len(sentenceList):
+        if self.index == len(self.sentenceList):
             raise StopIteration
 
-        ret = self.sentences[self.index]
+        ret = self.sentences[self.index].rawText
         self.index += 1
         return ret
 
     def contains( self, needle ):
-        matches = 0
-        goodwords = 0
-        haystack = self.sentenceList
+        haystack = [sent.words for sent in self.sentenceList]
         blacklist = stopwords.words("english")
-        blacklist.join([',', '.', '!','?', ':', ';'])
+        blacklist += [',', '.', '!','?', ':', ';']
         needle = [x for x in needle if not x in blacklist]
-        for sentence in haystack:
-            for tkn in sentence:
-                if tkn in blacklist:
-                    sentence.remove(tkn)
-                else:
-                    goodwords += 1
+
+        for i, sentence in enumerate(haystack):
+            haystack[i] = [x for x in sentence if not x in blacklist]
 
         for sentence in haystack:
+            #print 'comparing', needle, 'to', sentence
+            matches = 0
             for i, tkn in enumerate(sentence):
-                for j, x in enumerate(needle):
-                    if x is tkn and abs(i - j) < 5:
-                        matches += 1
-
-        if matches / goodwords > 0.7:
-            return True
+                if tkn in needle:
+                    matches += 1
+                if matches / len(sentence) > 0.7:
+                    return True
         return False
 
 """
