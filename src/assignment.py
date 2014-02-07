@@ -39,3 +39,23 @@ class assignment( object ) :
 
     def doDiff( self ):
         return self.final.doDiff( self.draft )
+
+    def customEditDist( self ):
+        newWords = 0
+
+        if len(self.final.paras) != len(self.draft.paras):
+            print 'paragraph numbers differ\n'
+
+        for paraFin, paraDft in zip(self.final.paras, self.draft.paras):
+            newWords += paraFin.wordDiff( paraDft )
+        return newWords
+
+
+
+
+
+
+
+
+
+

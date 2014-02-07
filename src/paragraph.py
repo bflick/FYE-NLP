@@ -2,6 +2,7 @@
 from __future__ import division
 from nltk.corpus import stopwords
 from sentence import sentence
+from word import word
 import utilspackage as util
 
 class paragraph( object ) :
@@ -55,19 +56,36 @@ class paragraph( object ) :
         self.index += 1
         return ret
 
+    def wordDiff( self, other ):
+        if self.size < other.size:
+            return other.wordDiff( self )
+
+        offset = 0
+        wordsChanged = 0
+        for i in range(len( self.sentences )):
+            if i+offset >= self.size or i >= other.size:
+                break
+            sent = self.sentences[i+offset]
+            othSent = other.sentences[i]
+            if not self.contains( othSent.words ):
+                offset += 1
+            else:
+                wordsChanged += sent.wordDiff( othSent )
+
+        return wordsChanged
+
     def contains( self, needle ):
         haystack = [sent.words for sent in self.sentenceList]
         blacklist = stopwords.words("english")
-        blacklist += [',', '.', '!','?', ':', ';']
+        blacklist += [',', '.', '!','?', ':', ';', '``']
         needle = [x for x in needle if not x in blacklist]
 
         for i, sentence in enumerate(haystack):
             haystack[i] = [x for x in sentence if not x in blacklist]
 
         for sentence in haystack:
-            #print 'comparing', needle, 'to', sentence
             matches = 0
-            for i, tkn in enumerate(sentence):
+            for tkn in sentence:
                 if tkn in needle:
                     matches += 1
                 if matches / len(sentence) > 0.7:
