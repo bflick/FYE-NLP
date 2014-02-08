@@ -4,7 +4,6 @@ from assignment import assignment
 import os
 import sys
 from sentence import sentence
-import utilspackage as util
 
 """
     First Year English - Natural Language Processing

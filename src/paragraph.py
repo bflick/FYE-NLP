@@ -3,7 +3,6 @@ from __future__ import division
 from nltk.corpus import stopwords
 from sentence import sentence
 from word import word
-import utilspackage as util
 
 class paragraph( object ) :
 

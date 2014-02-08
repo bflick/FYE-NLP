@@ -1,5 +1,3 @@
-import os
-import utilspackage as util
 from paper import paper
 
 class assignment( object ) :
