@@ -20,11 +20,13 @@ def getNGrams(tokens, n):
 def openFileReturnString( fileName ):
     filePtr = open( fileName )
     text = filePtr.read()
+    filePtr.close()
     return text
 
 def openFileReturnTokens( fileName, delim=None ):
     filePtr = open( fileName )
     text = filePtr.read()
+    filePtr.close()
     return text.split( delim )
 
 def removeList( text, blacklist ):

@@ -79,30 +79,31 @@ class sentence( object ):
     def containsCliche( self, clicheList ):
         for c in clicheList:
             cList = c.split()
-            print len(cList)
-            nGramList = ngrams(self.words, len(cList)+(len(cList)/len(self.words)))
-            print len(nGramList)
+
+            nGramList = ngrams(nlp_utils.removeListPunct(self.words), len(cList) + 1 )
             for ngram in nGramList:
-                #print cList
-                #print ngram
+
                 cols = len(ngram) + 1
                 rows = len(cList) + 1
                 mat = [[0 for j in range(cols)] for i in range(rows)]
-                for i in range(1, rows):
+                for i in range(rows):
                     mat[i][0] = i
                 for j in range(cols):
                     mat[0][j] = j
 
+                lastEntry = None
                 for i in range(1, rows):
                     for j in range(1, cols):
-                        print cList
-                        logging.info('comparing '+ngram[j-1]+' and '+c[i-1])
-                        if ngram[j-1] == c[i-1]:
+                        logging.info('comparing '+ngram[j-1]+' and '+cList[i-1])
+                        if ngram[j-1] == cList[i-1]:
                             mat[i][j] = mat[i-1][j-1]
                         else:
                             mat[i][j] = min(mat[i-1][j]+1, mat[i][j-1]+1, mat[i-1][j-1]+1)
-                    self.display( mat )  # debug >>>>>
-                if mat[-1][-1] <= len(cList) + 1:
+                        if i == rows - 1 and j == cols - 1:
+                            lastEntry = mat[i][j]
+                self.display( mat )  # debug >>>>>
+                if lastEntry != None and lastEntry <= 2:
+                    logging.debug('True -> '+str(lastEntry))
                     return True
         return False
 
