@@ -1,17 +1,21 @@
 from nltk.tag import pos_tag
 from word import word
-#import logging
-
+import logging
+import nlp_utils
+from nltk.util import ngrams
 
 class sentence( object ):
 
-    #logging.basicConfig(filename='../Sentence.log',level=logging.DEBUG)
+    logging.basicConfig(filename='../Sentence.log',level=logging.DEBUG)
 
+    """
+        properties accessible in the form 'sentenceObject.property'
+    """
     @property
     def rawText( self ):
         rawText = ''
         rt_ind = 0
-        punctuation = set('.,?:;"\'`!')
+        punctuation = set('.,?:;"\'`!()')
         for tkn in self.words:
             if any((c in tkn) for c in punctuation) or rt_ind == 0:
                 rawText += tkn
@@ -32,6 +36,10 @@ class sentence( object ):
     def words( self ):
         return self.wordList
 
+    """
+        Constructor:
+        @param 'listOfTokens' - a list of strings i.e. ['Rub','my','back','.']
+    """
     def __init__( self, listOfTokens ):
         self.wordList = listOfTokens
         self.index = 0
@@ -41,10 +49,18 @@ class sentence( object ):
         for w in tgdWords:
             self._taggedWords.append( w )
             self._size += 1
-
+    """
+        Iterator:
+        Allows for the objects use in a for each loop
+    """
     def __iter__( self ):
         return self
 
+    """
+        next
+        Necessary to access rawText in a for each loop
+        implied call with in a for each loop
+    """
     def next( self ):
         ret = ''
         if self.index == len(self.words):
@@ -55,6 +71,46 @@ class sentence( object ):
         return ret
 
 
+    """
+        containsCliche - windowed editDist allows for a replacement of a word
+        @param clicheList - list to search the sentence for
+        @return True if the cliche is contained; False otherwise
+    """
+    def containsCliche( self, clicheList ):
+        for c in clicheList:
+            cList = c.split()
+            print len(cList)
+            nGramList = ngrams(self.words, len(cList)+(len(cList)/len(self.words)))
+            print len(nGramList)
+            for ngram in nGramList:
+                #print cList
+                #print ngram
+                cols = len(ngram) + 1
+                rows = len(cList) + 1
+                mat = [[0 for j in range(cols)] for i in range(rows)]
+                for i in range(1, rows):
+                    mat[i][0] = i
+                for j in range(cols):
+                    mat[0][j] = j
+
+                for i in range(1, rows):
+                    for j in range(1, cols):
+                        print cList
+                        logging.info('comparing '+ngram[j-1]+' and '+c[i-1])
+                        if ngram[j-1] == c[i-1]:
+                            mat[i][j] = mat[i-1][j-1]
+                        else:
+                            mat[i][j] = min(mat[i-1][j]+1, mat[i][j-1]+1, mat[i-1][j-1]+1)
+                    self.display( mat )  # debug >>>>>
+                if mat[-1][-1] <= len(cList) + 1:
+                    return True
+        return False
+
+    """
+        wordDiff
+        @param 'other' - another sentence object
+        @returns the number of words removed and added
+    """
     def wordDiff( self, other ):
         cols = self.size + 1
         rows = other.size + 1
@@ -73,7 +129,6 @@ class sentence( object ):
 #                logging.info('comparing '+thisWord+' and '+otherWord)
                 if thisWord == otherWord:
                     matrix[i][j] = matrix[i-1][j-1]
-                    #pass
                 else:
 #                    logging.debug(thisWord+' is not '+otherWord)
                     deletion = matrix[i-1][j] + 1
@@ -85,11 +140,11 @@ class sentence( object ):
         return matrix[rows - 1][cols - 1]
 
 
-#    def display( self, mat ):
-#        printString = ''
-#        for row in range(len(mat)):
-#                printString += '  ' + ' '.join(str(mat[row])) + '\n'
-#        logging.debug('\n' + printString + '\n')
+    def display( self, mat ):
+        printString = ''
+        for row in range(len(mat)):
+                printString += '  ' + ' '.join(str(mat[row])) + '\n'
+        logging.debug('\n' + printString + '\n')
 
 
 

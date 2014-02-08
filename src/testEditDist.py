@@ -25,6 +25,13 @@ def main() :
     #print assignmentList[0].numEdits
     #print assignmentList[0].final.findNewSents(assignmentList[0].draft)
 
+"""
+    parseFolder
+    @param dirPath - a string value of the folder in which corpus source files
+                     are contained
+    @return a list of assignment objects containing rough and final drafts
+    @error if the number of final and rough drafts in the folder do not match
+"""
 def parseFolder( dirPath ):
     assignments = []
     draftReader = PlaintextCorpusReader(dirPath, '\d+draft\d*.*')

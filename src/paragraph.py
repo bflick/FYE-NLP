@@ -7,6 +7,11 @@ import utilspackage as util
 
 class paragraph( object ) :
 
+    similarityTolerance = 0.7
+
+    """
+        properties accessible in the form 'paraObject.property'
+    """
     @property
     def parent( self ):
         return self.parentPaper
@@ -35,6 +40,12 @@ class paragraph( object ) :
     def topic( self, value ):
         self._topic = value
 
+    """
+        Constructor:
+        @param 'parent' - the paper object that owns the paragraph
+        @param 'sList' - a list of a list of tokens in the form:
+                        [['Init', 'this', 'object','.']['Thank','you','.']]
+    """
     def __init__( self, parent, sList ):
         self.numSents = len(sList)
         self.parentPaper = parent
@@ -44,9 +55,18 @@ class paragraph( object ) :
         for s in sList:
             self.sentenceList.append( sentence(s) )
 
+    """
+        Iterator:
+        Allows for the objects use in a for each loop
+    """
     def __iter__( self ):
         return self
 
+    """
+        next
+        Necessary to access rawText in a for each loop
+        implied call with in a for each loop
+    """
     def next( self ):
         ret = ''
         if self.index == len(self.sentenceList):
@@ -56,6 +76,11 @@ class paragraph( object ) :
         self.index += 1
         return ret
 
+    """
+        wordDiff
+        @param 'other' - paper object with which to do comparison
+        @return number of edits made (substitution = deletion + insertion)
+    """
     def wordDiff( self, other ):
         if self.size < other.size:
             return other.wordDiff( self )
@@ -74,21 +99,22 @@ class paragraph( object ) :
 
         return wordsChanged
 
+    """
+        contains
+        @param 'needle' - a list of tokens (sentence) to search for
+        @return True if the paragraph contains a similar sentence; False otherwise
+    """
     def contains( self, needle ):
-        haystack = [sent.words for sent in self.sentenceList]
-        blacklist = stopwords.words("english")
-        blacklist += [',', '.', '!','?', ':', ';', '``']
-        needle = [x for x in needle if not x in blacklist]
+        haystack = [sent.words for sent in self.sentences]
 
-        for i, sentence in enumerate(haystack):
-            haystack[i] = [x for x in sentence if not x in blacklist]
-
+        needle = nlp_utils.removeStopList( needle )
+        haystack = nlp_utils.removeStopList( needle )
         for sentence in haystack:
             matches = 0
             for tkn in sentence:
                 if tkn in needle:
                     matches += 1
-                if matches / len(sentence) > 0.7:
+                if matches / len(sentence) > paragraph.similarityTolerance:
                     return True
         return False
 
