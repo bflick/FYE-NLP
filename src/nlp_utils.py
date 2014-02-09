@@ -29,6 +29,17 @@ def openFileReturnTokens( fileName, delim=None ):
     filePtr.close()
     return text.split( delim )
 
+def printDict( label, theDict ):
+    print( str(label) )
+    for first, second in theDict.items():
+        print( '%s : %s' % ( str(first), str(second) ))
+    return
+
+def printList( theList ):
+    for item in theList:
+        print( str(item) )
+    return
+
 def removeList( text, blacklist ):
     textMinusStopWords = []
     if isinstance(text, str):
@@ -54,9 +65,7 @@ def removeStopList( text ):
 def removeRawPunct( rawStr ):
     table = string.maketrans("","")
     rs = rawStr.translate(table, string.punctuation)
-    if rs[-1] == ' ':
-        del rs[-1]
-    return rs
+    return rs.strip()
 
 def setIntersection( list1, list2 ):
     s1 = set(list1)

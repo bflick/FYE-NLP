@@ -77,9 +77,10 @@ class sentence( object ):
         @return True if the cliche is contained; False otherwise
     """
     def containsCliche( self, clicheList ):
+        #print self.words
         for c in clicheList:
             cList = c.split()
-
+            #print cList
             nGramList = ngrams(nlp_utils.removeListPunct(self.words), len(cList) + 1 )
             for ngram in nGramList:
 
@@ -94,16 +95,15 @@ class sentence( object ):
                 lastEntry = None
                 for i in range(1, rows):
                     for j in range(1, cols):
-                        logging.info('comparing '+ngram[j-1]+' and '+cList[i-1])
                         if ngram[j-1] == cList[i-1]:
                             mat[i][j] = mat[i-1][j-1]
                         else:
                             mat[i][j] = min(mat[i-1][j]+1, mat[i][j-1]+1, mat[i-1][j-1]+1)
                         if i == rows - 1 and j == cols - 1:
                             lastEntry = mat[i][j]
-                self.display( mat )  # debug >>>>>
-                if lastEntry != None and lastEntry <= 2:
-                    logging.debug('True -> '+str(lastEntry))
+                if lastEntry != None and lastEntry <= 1:
+                    print ' '.join( ngram )
+                    print ' '.join( cList )+'\n'
                     return True
         return False
 
@@ -117,6 +117,7 @@ class sentence( object ):
         rows = other.size + 1
         matrix = [[0 for j in range(cols)] for i in range(rows)]
 
+        # not sure whether the range should start at 1 or not
         for i in range(1, rows):
             matrix[i][0] = i
         for j in range(1, cols):

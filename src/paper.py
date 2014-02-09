@@ -42,7 +42,7 @@ class paper( object ):
         return editDistance
 
     """
-        findCliches
+        findCliches - checks for cliches in sententences excluding those containing quotes
         @returns list of sentence locations which contain cliches as tuple;
                  i.e. (paragraph, sentence)
     """
@@ -51,8 +51,9 @@ class paper( object ):
         cliches = nlp_utils.openFileReturnTokens('../assets/cliches.txt', delim='/')
         for i, p in enumerate( self.paras ):
             for j, s in enumerate(p.sentences ):
-                if s.containsCliche( cliches ):
-                    sentLocs.append( (i, j) )
+                if not '"' in s.words:
+                    if s.containsCliche( cliches ):
+                        sentLocs.append( (i, j) )
         return sentLocs
 
     """

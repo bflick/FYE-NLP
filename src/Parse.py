@@ -17,9 +17,14 @@ def main() :
     filePath = '../FYE-TEXT/Test/'
     assignmentList += parseFolder( filePath )
 
-    loc = assignmentList[0].draft.findCliches()
-    print loc
+    cliches = {}
+    for i, a in enumerate( assignmentList ):
+        pid = 'Paper ' + str(i)
+        cliches[pid] = []
+        for loc in a.final.findCliches():
+            cliches[pid] += a.final.paras[loc[0]].sentences[loc[1]]
 
+    nlp_utils.printDict( 'Cliche locations\n', cliches )
     #rawTx = assignmentList[0].final.rawText
     #paraL = [t.words for gg in assignmentList[0].final.paras for t in gg.sentences ]
     #print paraL, '\n'
