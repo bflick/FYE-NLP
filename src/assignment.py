@@ -39,8 +39,8 @@ class assignment( object ) :
         @param 'final' - same as above
     """
     def __init__( self, draft, final ):
-        self.draftPaper = paper( final )
-        self.finalPaper = paper( draft )
+        self.draftPaper = paper( draft )
+        self.finalPaper = paper( final )
         self._score = 'unscored'
 
     """

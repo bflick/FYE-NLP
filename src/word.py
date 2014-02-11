@@ -1,4 +1,4 @@
-from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.stem.porter import *
 from nltk.corpus.reader.wordnet import ADJ, ADJ_SAT, ADV, NOUN, VERB
 
 class word( object ):
@@ -28,8 +28,6 @@ class word( object ):
 
     @staticmethod
     def getStem( taggedWord ):
-        if taggedWord[1] not in word.PennTagsToSimplePOS:
-            return taggedWord[0]
-        l = WordNetLemmatizer()
-        stem = l.lemmatize(taggedWord[0], word.PennTagsToSimplePOS[taggedWord[1]])
+        pStem = PorterStemmer()
+        stem = pStem.stem( taggedWord[0] )
         return stem

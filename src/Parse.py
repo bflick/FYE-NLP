@@ -5,6 +5,7 @@ from nltk import tokenize
 from assignment import assignment
 import os
 import sys
+import timeit
 import nlp_utils
 
 """

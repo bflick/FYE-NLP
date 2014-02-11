@@ -1,0 +1,7 @@
+to get out of the
+get out of dodge
+
+Cliche locations
+
+Paper 1 : ['He', 'definitely', 'would', 'have', 'been', 'kick', 'out', 'of', 'the', 'school', 'even', 'though', 'he', 'had', 'told', 'them', 'to', 'get', 'out', 'of', 'the', 'way', '.']
+Paper 0 : []

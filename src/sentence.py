@@ -101,7 +101,7 @@ class sentence( object ):
                             mat[i][j] = min(mat[i-1][j]+1, mat[i][j-1]+1, mat[i-1][j-1]+1)
                         if i == rows - 1 and j == cols - 1:
                             lastEntry = mat[i][j]
-                if lastEntry != None and lastEntry <= 1:
+                if lastEntry != None and lastEntry <= 2:
                     print ' '.join( ngram )
                     print ' '.join( cList )+'\n'
                     return True
