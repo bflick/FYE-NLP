@@ -6,6 +6,13 @@ import logging
 #import sys
 import string
 #import re
+from word import word
+
+itrchgbl = [['i','you','he','she','we'],['is','are','was'],['i\'ve','he\'s','you\'re','she\'s','we\'ve'],['am','is']]
+
+stopList = stopwords.words( "english" ) + list(string.punctuation) + [e for ls in itrchgbl for e in ls]
+
+clicheBlacklist = ['a','an','am','he','his','her','our','i','my','the','they','she','you','your']
 
 def getNGrams(tokens, n):
     thengrams = []
@@ -16,6 +23,12 @@ def getNGrams(tokens, n):
             thengrams.append(ngram)
         i = i + 1
     return thengrams
+
+def interchangable( word1, word2 ):
+    for ls in itrchgbl:
+        if word1 in ls and word2 in ls:
+            return True
+    return False
 
 def openFileReturnString( fileName ):
     filePtr = open( fileName )
@@ -41,31 +54,35 @@ def printList( theList ):
     return
 
 def removeList( text, blacklist ):
-    textMinusStopWords = []
-    if isinstance(text, str):
-        text = removeRawPunct( text )
-        text = text.split()
-
+    textMinusBL = []
     for x in text:
-        if isinstance(x, list):
-            textMinusStopWords.append( removeList( x, blacklist ))
-        else:
-            textMinusStopWords += [x for x in text if x not in blacklist]
-
-    return textMinusStopWords
+        if isinstance(x, str):
+            if not x in blacklist:
+                textMinusBL += [x]
+        elif isinstance(x, list):
+            textMinusBL.append( removeList( x, blacklist ))
+    return textMinusBL
 
 def removeListPunct( text ):
     return removeList( text, string.punctuation )
 
 def removeStopList( text ):
-    blacklist = stopwords.words( "english" )
-    blacklist += string.punctuation
-    return removeList( text, blacklist )
+    return removeList( text, stopList )
 
 def removeRawPunct( rawStr ):
     table = string.maketrans("","")
     rs = rawStr.translate(table, string.punctuation)
     return rs.strip()
+
+def clicheIntersection( ngram, cliche ):
+    ret = []
+
+    for e in ngram:
+        if e in cliche and ret.count(e) < cliche.count(e):
+            ret.append(e)
+
+    return ret
+            
 
 def setIntersection( list1, list2 ):
     s1 = set(list1)

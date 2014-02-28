@@ -10,20 +10,36 @@ countRemoved = 0
 for cliche in cliches:
     cList = cliche.split()
     stopCount = 0
-    for sw in ['as','a','the','is','in','on','at','to','it','of','an']:
+#    print(cList)
+#    print(cliche)
+    for sw in ['as','a','the','is','of','an']:
         if sw in cliche:
             stopCount += 1
 
-    if len( cList ) <= 3 or '(' in cliche or stopCount >= len(cList)/2:
+    add = 0
+    if len(cList) % 2 == 1:
+        add = 1
+
+    if len(cList) <= 3 or stopCount >= len(cList)/2:
         countRemoved += 1
     else:
-        txt += nlp_utils.removeRawPunct(cliche) + '/'
+        modCliche = []
+        for tkn in cList:
+            if tkn.endswith(('.','?','!',',')):
+                modCliche.append( nlp_utils.removeRawPunct( tkn ))
+            elif tkn.startswith('(') or tkn.endswith(')'):
+                pass
+            else:
+                modCliche.append(tkn)
+        print(' '.join( modCliche ))
+
+        txt += ' '.join( modCliche ) + '/'
         countAdded += 1
 
 print(countAdded)
 print(countAdded+countRemoved)
 
-newFile =  open( '../Samples/FirstYearEnglishNLP/clichesEdited.txt', 'w')
+newFile =  open('../assets/cliches.txt', 'w')
 
 try:
     print( txt, file = newFile )

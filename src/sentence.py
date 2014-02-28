@@ -1,5 +1,6 @@
 from nltk.tag import pos_tag
 from word import word
+import string
 import logging
 import nlp_utils
 from nltk.util import ngrams
@@ -77,13 +78,29 @@ class sentence( object ):
         @return True if the cliche is contained; False otherwise
     """
     def containsCliche( self, clicheList ):
-        #print self.words
+        wordList = nlp_utils.removeList( self.words, list(string.punctuation)+['s','t'] )
         for c in clicheList:
             cList = c.split()
-            #print cList
-            nGramList = ngrams(nlp_utils.removeListPunct(self.words), len(cList) + 1 )
-            for ngram in nGramList:
+            clicheKeywords = nlp_utils.removeList( cList, nlp_utils.clicheBlacklist )
+            nGramList = ngrams( wordList, len(cList) + 1 )
 
+            for ngram in nGramList:
+                intersect = nlp_utils.clicheIntersection( ngram, clicheKeywords )
+
+                if len(cList) == 0:
+                    continue
+                # if the cliche has 2 or fewer keywords
+                # both must be present in the ngram
+                if len(clicheKeywords) <= 2 and len(clicheKeywords) != len(intersect):
+                    continue
+                # otherwise the ngram may be missing one of the keywords
+                elif len(clicheKeywords) - 1 > len(intersect):
+                     continue
+
+                # debug <<<<<<<<<<
+                print len(intersect), len(clicheKeywords), '\n', len(ngram), len(cList)
+                print intersect, clicheKeywords, '\n', ngram, cList, '\n'
+                
                 cols = len(ngram) + 1
                 rows = len(cList) + 1
                 mat = [[0 for j in range(cols)] for i in range(rows)]
@@ -92,19 +109,26 @@ class sentence( object ):
                 for j in range(cols):
                     mat[0][j] = j
 
-                lastEntry = None
+                #lastEntry = None
                 for i in range(1, rows):
                     for j in range(1, cols):
-                        if ngram[j-1] == cList[i-1]:
+                        if word.getStem( ngram[j-1] ) == word.getStem( cList[i-1] ):
                             mat[i][j] = mat[i-1][j-1]
                         else:
                             mat[i][j] = min(mat[i-1][j]+1, mat[i][j-1]+1, mat[i-1][j-1]+1)
-                        if i == rows - 1 and j == cols - 1:
-                            lastEntry = mat[i][j]
-                if lastEntry != None and lastEntry <= 2:
-                    print ' '.join( ngram )
-                    print ' '.join( cList )+'\n'
+                        #if i == rows - 1 and j == cols - 1:
+                        #    lastEntry = mat[i][j]
+                
+                self.display( mat ) # debug <<<<<<<<<
+                #logging.debug(str(lastEntry)+' '+str(mat[-1][-1]))
+                logging.debug(str(clicheKeywords))
+                logging.debug(str(intersect))
+                logging.debug(' '.join( ngram ))
+                logging.debug(' '.join( cList )+'\n')
+
+                if mat[-1][-1] <= 2:
                     return True
+
         return False
 
     """
@@ -126,8 +150,8 @@ class sentence( object ):
 
         for i in range(1, rows):
             for j in range(1, cols):
-                thisWord = word.getStem( self.taggedWords[j-1] )
-                otherWord = word.getStem( other.taggedWords[i-1] )
+                thisWord = word.getTaggedStem( self.taggedWords[j-1] )
+                otherWord = word.getTaggedStem( other.taggedWords[i-1] )
 #                logging.info('comparing '+thisWord+' and '+otherWord)
                 if thisWord == otherWord:
                     matrix[i][j] = matrix[i-1][j-1]

@@ -1,0 +1,298 @@
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('lists', 'what', 'his', 'possibilities', 'are') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('what', 'his', 'possibilities', 'are', 'and') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['for', 'in'] ['in', 'for', 'penny'] 
+('for', 'addressing', 'the', 'situation', 'in') ['in', 'for', 'a', 'penny'] 
+
+2 3 
+5 4
+['to', 'it'] ['stick', 'it', 'to'] 
+('According', 'to', 'Obama', '"...', 'it') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['to', 'it'] ['stick', 'it', 'to'] 
+('to', 'Obama', '"...', 'it', 'is') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['in', 'back'] ['back', 'in', 'sec'] 
+('military', 'strike', 'in', 'the', 'back') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['in', 'back'] ['back', 'in', 'sec'] 
+('strike', 'in', 'the', 'back', 'of') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['in', 'back'] ['back', 'in', 'sec'] 
+('in', 'the', 'back', 'of', 'their') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['to', 'it'] ['stick', 'it', 'to'] 
+('to', 'his', 'audience', 'because', 'it') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('critical', 'situation', 'what', 'plans', 'are') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('situation', 'what', 'plans', 'are', 'in') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('what', 'plans', 'are', 'in', 'place') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['in', 'for'] ['in', 'for', 'penny'] 
+('in', 'the', 'diet', 'field', 'for') ['in', 'for', 'a', 'penny'] 
+
+2 3 
+5 4
+['what', 'say'] ['say', 'what', 'will'] 
+('what', 'he', 'had', 'to', 'say') ['say', 'what', 'you', 'will'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('that', 'prove', 'it', 'authority', 'to') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('prove', 'it', 'authority', 'to', 'the') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('it', 'authority', 'to', 'the', 'audience') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['for', 'thoughts'] ['penny', 'for', 'thoughts'] 
+('useful', 'for', 'explaining', 'other', 'thoughts') ['penny', 'for', 'your', 'thoughts'] 
+
+2 3 
+5 4
+['for', 'thoughts'] ['penny', 'for', 'thoughts'] 
+('for', 'explaining', 'other', 'thoughts', 'on') ['penny', 'for', 'your', 'thoughts'] 
+
+2 3 
+4 3
+['light', 'on'] ['shed', 'light', 'on'] 
+('shines', 'a', 'light', 'on') ['shed', 'light', 'on'] 
+
+2 3 
+5 4
+['to', 'it'] ['stick', 'it', 'to'] 
+('companies', 'want', 'to', 'prevent', 'it') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('it', 'would', 'be', 'good', 'to') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('Inc', 'and', 'added', 'it', 'to') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('and', 'added', 'it', 'to', 'my') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('added', 'it', 'to', 'my', 'sources') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('find', 'out', 'what', 'arguments', 'are') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('out', 'what', 'arguments', 'are', 'made') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('what', 'arguments', 'are', 'made', 'and') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['to', 'it'] ['stick', 'it', 'to'] 
+('to', 'a', 'crop', 'when', 'it') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+4 3
+['too', 'much'] ['too', 'much', 'information'] 
+('cost', 'them', 'too', 'much') ['too', 'much', 'information'] 
+
+2 3 
+4 3
+['too', 'much'] ['too', 'much', 'information'] 
+('them', 'too', 'much', 'to') ['too', 'much', 'information'] 
+
+2 3 
+5 4
+['back', 'in'] ['back', 'in', 'sec'] 
+('Lets', 'go', 'back', 'in', 'history') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['back', 'in'] ['back', 'in', 'sec'] 
+('go', 'back', 'in', 'history', 'and') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['back', 'in'] ['back', 'in', 'sec'] 
+('back', 'in', 'history', 'and', 'look') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('They', 'marketed', 'it', 'to', 'farmers') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('marketed', 'it', 'to', 'farmers', 'and') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['it', 'to'] ['stick', 'it', 'to'] 
+('it', 'to', 'farmers', 'and', 'by') ['stick', 'it', 'to', 'you'] 
+
+3 4 
+6 5
+['put', 'it', 'on'] ['put', 'lid', 'on', 'it'] 
+('are', 'buying', 'put', 'it', 'back', 'on') ['put', 'a', 'lid', 'on', 'it'] 
+
+3 4 
+6 5
+['put', 'it', 'on'] ['put', 'lid', 'on', 'it'] 
+('buying', 'put', 'it', 'back', 'on', 'the') ['put', 'a', 'lid', 'on', 'it'] 
+
+3 4 
+6 5
+['put', 'it', 'on'] ['put', 'lid', 'on', 'it'] 
+('put', 'it', 'back', 'on', 'the', 'shelf') ['put', 'a', 'lid', 'on', 'it'] 
+
+2 3 
+5 4
+['money', 'on'] ['right', 'on', 'money'] 
+('our', 'hard', 'earned', 'money', 'on') ['right', 'on', 'the', 'money'] 
+
+2 3 
+5 4
+['money', 'on'] ['right', 'on', 'money'] 
+('hard', 'earned', 'money', 'on', 'food') ['right', 'on', 'the', 'money'] 
+
+2 3 
+5 4
+['money', 'on'] ['right', 'on', 'money'] 
+('earned', 'money', 'on', 'food', 'we') ['right', 'on', 'the', 'money'] 
+
+2 3 
+5 4
+['money', 'on'] ['right', 'on', 'money'] 
+('money', 'on', 'food', 'we', 'think') ['right', 'on', 'the', 'money'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('lists', 'what', 'his', 'possibilities', 'are') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('what', 'his', 'possibilities', 'are', 'and') ['what', 'are', 'you', 'chicken'] 
+
+4 5 
+6 5
+['two', 'to', 'rub', 'together'] ['two', 'nickels', 'to', 'rub', 'together'] 
+('got', 'two', 'dimes', 'to', 'rub', 'together') ['two', 'nickels', 'to', 'rub', 'together'] 
+
+2 3 
+4 3
+['forty', 'winks'] ['catch', 'forty', 'winks'] 
+('he', 'caught', 'forty', 'winks') ['catch', 'forty', 'winks'] 
+
+2 3 
+5 4
+['to', 'it'] ['stick', 'it', 'to'] 
+('According', 'to', 'Obama', '"...', 'it') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['to', 'it'] ['stick', 'it', 'to'] 
+('to', 'Obama', '"...', 'it', 'is') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['in', 'back'] ['back', 'in', 'sec'] 
+('military', 'strike', 'in', 'the', 'back') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['in', 'back'] ['back', 'in', 'sec'] 
+('strike', 'in', 'the', 'back', 'of') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['in', 'back'] ['back', 'in', 'sec'] 
+('in', 'the', 'back', 'of', 'their') ['back', 'in', 'a', 'sec'] 
+
+2 3 
+5 4
+['have', 'prayer'] ["doesn't", 'have', 'prayer'] 
+('Obama', 'doesn', 'have', 'a', 'prayer') ["doesn't", 'have', 'a', 'prayer'] 
+
+2 3 
+5 4
+['to', 'it'] ['stick', 'it', 'to'] 
+('to', 'his', 'audience', 'because', 'it') ['stick', 'it', 'to', 'you'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('critical', 'situation', 'what', 'plans', 'are') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('situation', 'what', 'plans', 'are', 'in') ['what', 'are', 'you', 'chicken'] 
+
+2 3 
+5 4
+['what', 'are'] ['what', 'are', 'chicken'] 
+('what', 'plans', 'are', 'in', 'place') ['what', 'are', 'you', 'chicken'] 
+
+draft cliches
+
+Paper 1 : [10, 2, 'He shines a light on how they raise meet, poultry, and pork. ']
+Paper 0 : []
+Paper 3 : [1, 5, "Obama starts with emotion not only to appeal to the audience, who haven' t got two dimes to rub together. ", 3, 0, 'President Obama then announces his plans for addressing the situation in Syria: a targeted military strike, then he caught forty winks. ', 5, 0, "President Obama doesn' t have a prayer. "]
+Paper 2 : [3, 0, 'The large corporations may argue that it would cost them too much to label GMO products. ']
+final cliches
+

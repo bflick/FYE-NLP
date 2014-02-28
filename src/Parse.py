@@ -13,21 +13,22 @@ import nlp_utils
 """
 
 def main() :
-    assignmentList = [] # to contain 101 and 102 files
+    assignments = [] # to contain 101 and 102 files
 
-    filePath = '../FYE-TEXT/Test/'
-    assignmentList += parseFolder( filePath )
+    filePath = '../FYE-TEXT/102'
+    assignments += parseFolder( filePath )
 
-    cliches = {}
-    for i, a in enumerate( assignmentList ):
-        pid = 'Paper ' + str(i)
-        cliches[pid] = []
-        for loc in a.final.findCliches():
-            cliches[pid] += a.final.paras[loc[0]].sentences[loc[1]]
+    dCliches, fCliches = getCliches( assignments )
 
-    nlp_utils.printDict( 'Cliche locations\n', cliches )
-    #rawTx = assignmentList[0].final.rawText
-    #paraL = [t.words for gg in assignmentList[0].final.paras for t in gg.sentences ]
+    for key, entry in fCliches:
+        print key, entry
+        print key, dCliches[key]
+
+    #nlp_utils.printDict( 'draft cliches\n', dCliches )
+    #nlp_utils.printDict( 'final cliches\n', fCliches )
+
+    #rawTx = assignments[0].final.rawText
+    #paraL = [t.words for gg in assignments[0].final.paras for t in gg.sentences ]
     #print paraL, '\n'
 
     #bm = nlp_utils.removeStopList(rawTx)
@@ -35,12 +36,27 @@ def main() :
     #print bm, '\n'
     #print ftw, '\n'
 
-    #print assignmentList[0].draft.rawText
+    #print assignments[0].draft.rawText
     #print '\n'
-    #print assignmentList[0].final.rawText
+    #print assignments[0].final.rawText
 
-    #print assignmentList[0].numEdits
-    #print assignmentList[0].final.findNewSents(assignmentList[0].draft)
+    #print assignments[0].numEdits
+    #print assignments[0].final.findNewSents(assignmentList[0].draft)
+
+def getCliches( assignmentList ):
+    draftCliches = {}
+    finalCliches = {}
+    for i, a in enumerate( assignmentList ):
+        pid = 'Paper ' + str(i)
+        draftCliches[pid] = []
+        finalCliches[pid] = []
+        for loc in a.draft.findCliches():
+            draftCliches[pid] += ( loc[0],loc[1], a.draft.paras[loc[0]].sentences[loc[1]].rawText )
+        for loc in a.draft.findCliches():
+            finalCliches[pid] += ( loc[0],loc[1], a.final.paras[loc[0]].sentences[loc[1]].rawText )
+    return draftCliches, finalCliches
+
+
 
 """
     parseFolder
