@@ -82,7 +82,6 @@ def clicheIntersection( ngram, cliche ):
             ret.append(e)
 
     return ret
-            
 
 def setIntersection( list1, list2 ):
     s1 = set(list1)

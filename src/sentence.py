@@ -16,9 +16,8 @@ class sentence( object ):
     def rawText( self ):
         rawText = ''
         rt_ind = 0
-        punctuation = set('.,?:;"\'`!()')
         for tkn in self.words:
-            if any((c in tkn) for c in punctuation) or rt_ind == 0:
+            if any((c in tkn) for c in string.punctuation) or rt_ind == 0:
                 rawText += tkn
             else:
                 rawText += ' ' + tkn
@@ -84,7 +83,7 @@ class sentence( object ):
             clicheKeywords = nlp_utils.removeList( cList, nlp_utils.clicheBlacklist )
             nGramList = ngrams( wordList, len(cList) + 1 )
 
-            for ngram in nGramList:
+            for n, ngram in enumerate(nGramList):
                 intersect = nlp_utils.clicheIntersection( ngram, clicheKeywords )
 
                 if len(cList) == 0:
@@ -98,8 +97,8 @@ class sentence( object ):
                      continue
 
                 # debug <<<<<<<<<<
-                print len(intersect), len(clicheKeywords), '\n', len(ngram), len(cList)
-                print intersect, clicheKeywords, '\n', ngram, cList, '\n'
+                #print len(intersect), len(clicheKeywords), '\n', len(ngram), len(cList)
+                #print intersect, clicheKeywords, '\n', ngram, cList, '\n'
                 
                 cols = len(ngram) + 1
                 rows = len(cList) + 1
@@ -127,9 +126,9 @@ class sentence( object ):
                 logging.debug(' '.join( cList )+'\n')
 
                 if mat[-1][-1] <= 2:
-                    return True
+                    return n
 
-        return False
+        return -1
 
     """
         wordDiff
@@ -172,5 +171,29 @@ class sentence( object ):
                 printString += '  ' + ' '.join(str(mat[row])) + '\n'
         logging.debug('\n' + printString + '\n')
 
+
+
+    def isPassive( self ):
+        ret = False
+        count = 0
+        conjugates = ["be","was", "were", "been", "is", "being", "are", "got", "gotten", "had gotten"]
+        pastPart = "VBN"
+        det = "DT"
+
+        for token, pos in self.taggedWords:
+            if pos == pastPart and self.taggedWords[self.taggedWords.index((token,pos))-1] != det:
+                index = self.taggedWords.index((token, pos))
+                for word in self.words:
+                    if word in conjugates:
+                        if self.words.index(word) >= index - 2:
+                            count += 1
+                            break
+
+                count += 1
+                break
+        if count >= 2:
+            ret = True
+
+        return ret
 
 

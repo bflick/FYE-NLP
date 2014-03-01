@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python2
 
 from nltk.corpus.reader.plaintext import PlaintextCorpusReader
 from nltk import tokenize
@@ -12,17 +12,26 @@ import nlp_utils
     First Year English - Natural Language Processing
 """
 
-def main() :
+def main():
     assignments = [] # to contain 101 and 102 files
 
     filePath = '../FYE-TEXT/102'
     assignments += parseFolder( filePath )
 
-    dCliches, fCliches = getCliches( assignments )
+    dPassives, fPassives = getPassives( assignments )
 
-    for key, entry in fCliches:
+    for key, entry in fPassives.items():
+        print "final", key
         print key, entry
-        print key, dCliches[key]
+        print "draft", key
+        print key, dPassives[key]
+
+
+#    dCliches, fCliches = getCliches( assignments )
+#
+#    for key, entry in fCliches:
+#        print key, entry
+#        print key, dCliches[key]
 
     #nlp_utils.printDict( 'draft cliches\n', dCliches )
     #nlp_utils.printDict( 'final cliches\n', fCliches )
@@ -51,12 +60,24 @@ def getCliches( assignmentList ):
         draftCliches[pid] = []
         finalCliches[pid] = []
         for loc in a.draft.findCliches():
-            draftCliches[pid] += ( loc[0],loc[1], a.draft.paras[loc[0]].sentences[loc[1]].rawText )
-        for loc in a.draft.findCliches():
-            finalCliches[pid] += ( loc[0],loc[1], a.final.paras[loc[0]].sentences[loc[1]].rawText )
+            draftCliches[pid] += [loc[0],loc[1], a.draft.paras[loc[0]].sentences[loc[1]].rawText]
+        for loc in a.final.findCliches():
+            finalCliches[pid] += [loc[0],loc[1], a.final.paras[loc[0]].sentences[loc[1]].rawText]
     return draftCliches, finalCliches
 
+def getPassives( assignmentList ):
+    draftPassives = {}
+    finalPassives = {}
+    for i, a in enumerate( assignmentList ):
+        pid = 'Paper ' + str(i)
+        draftPassives[pid] = []
+        finalPassives[pid] = []
+        for loc in a.draft.findPassives():
+            draftPassives[pid].append(( loc[0], loc[1], a.draft.paras[loc[0]].sentences[loc[1]].rawText ))
+        for loc in a.final.findPassives():
+            finalPassives[pid].append(( loc[0], loc[1], a.final.paras[loc[0]].sentences[loc[1]].rawText ))
 
+    return draftPassives, finalPassives
 
 """
     parseFolder

@@ -43,7 +43,7 @@ class paper( object ):
 
     """
         findCliches - checks for cliches in sententences excluding those containing quotes
-        @returns list of sentence locations which contain cliches as tuple;
+        @return list of sentence locations which contain cliches as tuple;
                  i.e. (paragraph, sentence)
     """
     def findCliches( self ):
@@ -52,8 +52,22 @@ class paper( object ):
         for i, p in enumerate( self.paras ):
             for j, s in enumerate(p.sentences ):
                 if not '"' in s.words:
-                    if s.containsCliche( cliches ):
-                        sentLocs.append( (i, j) )
+                    clicheAt = s.containsCliche( cliches )
+                    if clicheAt >= 0:
+                        sentLocs.append( (i, j, clicheAt) )
+        return sentLocs
+
+    """
+       findPassives - finds a list of locations of sentences containing passive voice
+       @return list of sentence locations which use passive voice as tuple;
+                 i.e. (paragraph, sentence)
+    """
+    def findPassives( self ):
+        sentLocs = []
+        for i, p in enumerate( self.paras ):
+            for j, s in enumerate(p.sentences ):
+                if s.isPassive():
+                    sentLocs.append( (i, j) )
         return sentLocs
 
     """
