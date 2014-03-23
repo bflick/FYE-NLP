@@ -66,8 +66,8 @@ class paper( object ):
             for j, s in enumerate(p.sentences ):
                 if not '"' in s.words:
                     clicheAt = s.containsCliche( cliches )
-                    if clicheAt >= 0:
-                        sentLocs.append( (i, j, clicheAt) )
+                    if clicheAt != -1:
+                        sentLocs.append( (i, j, clicheAt[0], clicheAt[1]) )
         return sentLocs
 
     """

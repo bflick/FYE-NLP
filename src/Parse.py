@@ -7,6 +7,7 @@ import os
 import sys
 import timeit
 import nlp_utils
+import string
 
 """
     First Year English - Natural Language Processing
@@ -16,77 +17,128 @@ def main():
     nominal = nlp_utils.openFileReturnTokens( '../assets/nominalizations.txt' )
     nomBlacklist = nlp_utils.openFileReturnTokens( '../assets/nominalBlacklist.txt' )
 
-    assignments = [] # to contain 101 and 102 files
+    assignments = {} # to contain 101 and 102 files
 
     filePath = '../FYE-TEXT/102'
-    assignments += parseFolder( filePath )
+    assignments = parseFolder( filePath )
 
-    for a in assignments:
-        for x in a.draft.findNominalizations( nominal, nomBlacklist ):
-            print x
-        for x in a.final.findNominalizations( nominal, nomBlacklist ):
-            print x
+    #dCliches, fCliches = getCliches( assignments )
+    #printCliches( assignments, dCliches, fCliches )
 
-#    for a in assignments:
-#        print a.draft.interDiff( a.final )
+    draftNominals, finalNominals = getNominals( assignments )
+    for pid in assignments.keys():
+        print draftNominals[pid]
+        print finalNominals[pid]
+
+def printCliches( assignmentDict, dClicheDict, fClicheDict ):
+    maxlen = 80
+    lines = []
+    b = list(string.punctuation) + ['t','s','ll']
+    for pid, a in assignmentDict.items():
+        fCliches = fClicheDict[pid]
+        lines += [('Final ' + pid, '')]
+        for loc in fCliches:
+            sent = a.final.paras[loc[0]].sentences[loc[1]].words
+            foundAt = loc[2]
+            width = 0
+            oddline = ''
+            evenline = ''
+            for i, word in enumerate(sent):
+
+                if width > maxlen:
+                    oddline += '\n'
+                    evenline += '\n'
+                    width = 0
+
+                oddline += word
+                width += len(word)
+                if i < len(sent) - 1 and not sent[i+1] in b:
+                    width += 1
+                    evenline += ' '
+                    oddline += ' '
+
+                if word in b:
+                    foundAt += 1
+
+                evenline += ' '*len(word)
+
+                if i == foundAt:
+                    if len(loc[3]) + width > maxlen:
+                        cwid = width
+                        cList = loc[3]
+                        cList = cList.split()
+                        for tkn in cList:
+                            if len(tkn) + cwid > maxlen:
+                                evenline += '\n' + tkn + ' '
+                                cwid = 0
+                            else:
+                                evenline += tkn + ' '
+                    else:
+                        evenline += loc[3]
+
+            lines.append(( oddline, evenline ))
+
+    for l in lines:
+        stutext = l[0].split('\n')
+        cliche = l[1].split('\n')
+        for i, t in enumerate(stutext):
+            print t
+            if i < len(cliche):
+                print cliche[i]
 
 
-#    dPassives, fPassives = getPassives( assignments )
+def getNominals( assignmentDict ):
+    draftNoms = {}
+    finalNoms = {}
+    nominal = nlp_utils.openFileReturnTokens( '../assets/nominalizations.txt' )
+    nomBlacklist = nlp_utils.openFileReturnTokens( '../assets/nominalBlacklist.txt' )
+    for pid, a in assignmentDict.items():
+        draftNoms[pid] = []
+        finalNoms[pid] = []
+        for loc in a.draft.findNominalizations( nominal, nomBlacklist ):
+            draftNoms[pid].append(( loc[0], loc[1], loc[2], loc[3] ))
 
-    #for key, entry in fPassives.items():
-      # pass
-       ##print key, entry
-       #print "draft", key
-       #print key, dPassives[key]
+        for loc in a.final.findNominalizations( nominal, nomBlacklist ):
+            finalNoms[pid].append(( loc[0], loc[1], loc[2], loc[3] ))
 
+    nlp_utils.printDict('label', draftNoms)
+    return draftNoms, finalNoms
 
-#    dCliches, fCliches = getCliches( assignments )
-#
-#    for key, entry in fCliches:
-#        print key, entry
-#        print key, dCliches[key]
-
-    #nlp_utils.printDict( 'draft cliches\n', dCliches )
-    #nlp_utils.printDict( 'final cliches\n', fCliches )
-
-    #rawTx = assignments[0].final.rawText
-    #paraL = [t.words for gg in assignments[0].final.paras for t in gg.sentences ]
-    #print paraL, '\n'
-
-    #bm = nlp_utils.removeStopList(rawTx)
-    #ftw = nlp_utils.removeStopList(paraL)
-    #print bm, '\n'
-    #print ftw, '\n'
-
-    #print assignments[0].draft.rawText
-    #print '\n'
-    #print assignments[0].final.rawText
-
-    #print assignments[0].numEdits
-    #print assignments[0].final.findNewSents(assignmentList[0].draft)
-
-def getCliches( assignmentList ):
+"""
+    getCliches - finds the locations in each paper for passive voiced sentences
+    @param assignment list
+    @return a tuple of dictionaries containing lists of sentences locations containg a cliche
+"""
+def getCliches( assignmentDict ):
     draftCliches = {}
     finalCliches = {}
-    for i, a in enumerate( assignmentList ):
-        pid = 'Paper ' + str(i)
+    for pid, a in assignmentDict.items():
         draftCliches[pid] = []
         finalCliches[pid] = []
+        # loc[0]=paragraph, loc[1]=sentence, loc[2]=ngram, loc[3]=cliche
         for loc in a.draft.findCliches():
-            draftCliches[pid] += [loc[0],loc[1], a.draft.paras[loc[0]].sentences[loc[1]].rawText]
+            draftCliches[pid].append(( loc[0], loc[1], loc[2], loc[3] ))
+
         for loc in a.final.findCliches():
-            finalCliches[pid] += [loc[0],loc[1], a.final.paras[loc[0]].sentences[loc[1]].rawText]
+            finalCliches[pid].append(( loc[0], loc[1], loc[2], loc[3] ))
+
     return draftCliches, finalCliches
 
-def getPassives( assignmentList ):
+"""
+    getPassives - finds the locations in each paper for passive voiced sentences
+    @param assignment list
+    @return a tuple of dictionaries containing lists of passive sentences
+"""
+def getPassives( assignmentDict ):
     draftPassives = {}
     finalPassives = {}
-    for i, a in enumerate( assignmentList ):
-        pid = 'Paper ' + str(i)
+    for pid, a in assignmentDict.items():
         draftPassives[pid] = []
         finalPassives[pid] = []
+
         for loc in a.draft.findPassives():
             draftPassives[pid].append(( loc[0], loc[1], a.draft.paras[loc[0]].sentences[loc[1]].rawText ))
+
         for loc in a.final.findPassives():
             finalPassives[pid].append(( loc[0], loc[1], a.final.paras[loc[0]].sentences[loc[1]].rawText ))
 
@@ -100,7 +152,7 @@ def getPassives( assignmentList ):
     @error if the number of final and rough drafts in the folder do not match
 """
 def parseFolder( dirPath ):
-    assignments = []
+    assignments = {}
     draftReader = PlaintextCorpusReader(dirPath, '\d+draft\d*.*')
     finalReader = PlaintextCorpusReader(dirPath, '\d+final\d*.*')
 
@@ -111,12 +163,14 @@ def parseFolder( dirPath ):
     draftIdsSortedList = draftReader.fileids()
 
     for i in range(len(finalReader.fileids())):
+        pid = 'Paper ' + str(i)
         final = finalReader.paras( finalIdsSortedList[i] )
         draft = draftReader.paras( draftIdsSortedList[i] )
         assn = assignment( draft, final )
-        assignments.append( assn )
+        assignments[pid] = assn
 
     return assignments
+
 
 if __name__ == '__main__' :
     main()

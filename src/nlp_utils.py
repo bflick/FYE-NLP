@@ -24,7 +24,7 @@ def getNGrams(tokens, n):
         i = i + 1
     return thengrams
 
-def interchangable( word1, word2 ):
+def interchangeable( word1, word2 ):
     for ls in itrchgbl:
         if word1 in ls and word2 in ls:
             return True
