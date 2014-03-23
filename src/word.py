@@ -2,10 +2,10 @@ from nltk.stem.porter import *
 from nltk.corpus.reader.wordnet import ADJ, ADJ_SAT, ADV, NOUN, VERB
 import string
 import re
+import nlp_utils
 
-class word( object ):
-
-    PennTagsToSimplePOS = {
+"""
+        Penn2POS = {
         'FW':NOUN,
         'JJ':ADJ,
         'JJR':ADJ,
@@ -27,6 +27,9 @@ class word( object ):
         'VBP':VERB,
         'VBZ':VERB
     }
+"""
+
+class word( object ):
 
     @staticmethod
     def getTaggedStem( taggedWord ):
@@ -34,9 +37,6 @@ class word( object ):
         stem = ''
         if isinstance(taggedWord, tuple):
             stem = pStem.stem( taggedWord[0] )
-        if re.match( r'.*\'[a-z]+', stem, re.I ):
-            i = stem.index('\'')
-            stem = stem[:i]
         stem = stem.replace('\'','')
         return stem.lower()
 
@@ -47,8 +47,16 @@ class word( object ):
         stem = ''
         if isinstance(word, str):
             stem = pStem.stem( word )
-        if re.match( r'.*\'[a-z]+', stem, re.I ):
-            i = stem.index('\'')
-            stem = stem[:i]
         stem = stem.replace('\'','')
         return stem.lower()
+
+    @staticmethod
+    def isNominal( word, nominal, nomBlacklist ):
+        sufList = ['ion', 'ment', 'ness', 'ance', 'ity', 'ions', 'ments', 'ances', 'ities']
+        if word in nominal:
+            return True
+        if word not in nomBlacklist:
+            for suf in sufList:
+                if word.endswith(suf):
+                    return True
+        return False

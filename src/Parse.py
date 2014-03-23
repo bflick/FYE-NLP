@@ -1,4 +1,4 @@
-#! /usr/bin/python2
+#! /usr/bin/python
 
 from nltk.corpus.reader.plaintext import PlaintextCorpusReader
 from nltk import tokenize
@@ -13,18 +13,31 @@ import nlp_utils
 """
 
 def main():
+    nominal = nlp_utils.openFileReturnTokens( '../assets/nominalizations.txt' )
+    nomBlacklist = nlp_utils.openFileReturnTokens( '../assets/nominalBlacklist.txt' )
+
     assignments = [] # to contain 101 and 102 files
 
     filePath = '../FYE-TEXT/102'
     assignments += parseFolder( filePath )
 
-    dPassives, fPassives = getPassives( assignments )
+    for a in assignments:
+        for x in a.draft.findNominalizations( nominal, nomBlacklist ):
+            print x
+        for x in a.final.findNominalizations( nominal, nomBlacklist ):
+            print x
 
-    for key, entry in fPassives.items():
-        print "final", key
-        print key, entry
-        print "draft", key
-        print key, dPassives[key]
+#    for a in assignments:
+#        print a.draft.interDiff( a.final )
+
+
+#    dPassives, fPassives = getPassives( assignments )
+
+    #for key, entry in fPassives.items():
+      # pass
+       ##print key, entry
+       #print "draft", key
+       #print key, dPassives[key]
 
 
 #    dCliches, fCliches = getCliches( assignments )

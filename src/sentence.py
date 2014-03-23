@@ -99,7 +99,7 @@ class sentence( object ):
                 # debug <<<<<<<<<<
                 #print len(intersect), len(clicheKeywords), '\n', len(ngram), len(cList)
                 #print intersect, clicheKeywords, '\n', ngram, cList, '\n'
-                
+
                 cols = len(ngram) + 1
                 rows = len(cList) + 1
                 mat = [[0 for j in range(cols)] for i in range(rows)]
@@ -111,13 +111,13 @@ class sentence( object ):
                 #lastEntry = None
                 for i in range(1, rows):
                     for j in range(1, cols):
-                        if word.getStem( ngram[j-1] ) == word.getStem( cList[i-1] ):
+                        if word.getStem( ngram[j-1] ) == word.getStem( cList[i-1] ) or nlp_utils.interchangeable( ngram[j-1], cList[i-1] ):
                             mat[i][j] = mat[i-1][j-1]
                         else:
                             mat[i][j] = min(mat[i-1][j]+1, mat[i][j-1]+1, mat[i-1][j-1]+1)
                         #if i == rows - 1 and j == cols - 1:
                         #    lastEntry = mat[i][j]
-                
+
                 self.display( mat ) # debug <<<<<<<<<
                 #logging.debug(str(lastEntry)+' '+str(mat[-1][-1]))
                 logging.debug(str(clicheKeywords))
@@ -176,7 +176,7 @@ class sentence( object ):
     def isPassive( self ):
         ret = False
         count = 0
-        conjugates = ["be","was", "were", "been", "is", "being", "are", "got", "gotten", "had gotten"]
+        conjugates = ["be", "was", "were", "been", "is", "being", "are", "got", "gotten", "had gotten"]
         pastPart = "VBN"
         det = "DT"
 

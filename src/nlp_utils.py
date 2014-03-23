@@ -1,12 +1,12 @@
 from __future__ import print_function
 from nltk.corpus import stopwords  #from nltk import tokenize
 #from nltk.corpus.reader.plaintext import PlaintextCorpusReader
+from nltk.probability import FreqDist
 import logging
 #import os
 #import sys
 import string
 #import re
-from word import word
 
 itrchgbl = [['i','you','he','she','we'],['is','are','was'],['i\'ve','he\'s','you\'re','she\'s','we\'ve'],['am','is']]
 
@@ -87,3 +87,45 @@ def setIntersection( list1, list2 ):
     s1 = set(list1)
     s2 = set(list2)
     return [e for e in s1 if e in s2]
+
+
+def iDist( wL1, wL2 ):
+    intLen1 = len(wL1)
+    intLen2 = len(wL2)
+    if intLen1 < intLen2:
+        return iDist( wL2, wL1 )
+    if intLen2 == 0 or intLen1 == 0:
+        print('error')
+        return 0
+    else:
+        d = intLen1 / intLen2
+
+    freqCount1 = {}
+    freqCount2 = {}
+    for w in wL1:
+        try:
+            freqCount1[w.lower()] += 1
+        except:
+            freqCount1[w.lower()] = 1
+
+    for w in wL2:
+        try:
+            freqCount2[w.lower()] += 1
+        except:
+            freqCount2[w.lower()] = 1
+
+    rDist = 0.0
+    nSet = setIntersection( wL1, wL2 )
+    for w in nSet:
+        rDist += abs(freqCount1[w.lower()] - (freqCount2[w.lower()]*d))
+    wL1 = set(wL1)
+    wL2 = set(wL2)
+    for w in wL1:
+        if w not in nSet:
+            rDist += freqCount1[w.lower()]
+    for w in wL2:
+        if w not in nSet:
+            rDist += freqCount2[w.lower()] * d
+
+    return rDist / (intLen1 + (intLen2 * d))
+

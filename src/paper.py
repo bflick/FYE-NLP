@@ -1,6 +1,8 @@
 import nltk.metrics.distance as diff
+from nltk.stem.wordnet import WordNetLemmatizer
 import nlp_utils
 from paragraph import paragraph
+from word import word
 
 class paper( object ):
 
@@ -31,6 +33,17 @@ class paper( object ):
         self.paraList = []
         for p in pList:
             self.paraList.append( paragraph( self, p ))
+
+    def getWords( self ):
+        words = []
+        for p in self.paras:
+            for s in p.sentences:
+                for w in s.words:
+                        words.append( w )
+        return words
+
+    def interDiff( self, another ):
+        return nlp_utils.iDist( self.getWords(), another.getWords() )
 
     """
         doDiff
@@ -90,3 +103,16 @@ class paper( object ):
                 if not p1.contains( s2 ):
                     newSentenceIndices.append( (i, j) )
         return newSentenceIndices
+
+    def findNominalizations( self, nomList, nomBlacklist ):
+        nomList = []
+        lemm = WordNetLemmatizer()
+        for i, p in enumerate(self.paras):
+            for j, s in enumerate(p.sentences):
+                for k, (tkn, pos) in enumerate(s.taggedWords):
+                    singular = lemm.lemmatize( tkn )
+                    if len(s.taggedWords) > k + 1 and k - 1 > 0 and word.isNominal( singular, nomList, nomBlacklist ):
+                        if pos.startswith( 'N' ) and s.taggedWords[k - 1][1] == 'DT':
+                            if s.taggedWords[k + 1][1] == 'IN':
+                                nomList.append( (i, j, k, s.taggedWords[k - 1][0] + ' ' + tkn + ' ' + s.taggedWords[k + 1][0]) )
+        return nomList
