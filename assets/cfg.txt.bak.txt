@@ -1,0 +1,52 @@
+S -> NP VP | CP | CX
+
+CX -> NP PP VP | NP-NP PP VP | NP-NP PP VP-VP | NP PP VP-VP | PP NP VP | PP CP | NP VP PP
+
+CP -> NP-NP VP | NP VP-VP | NP-NP VP-VP
+
+VP-VP -> VP DET VP | VP ADV VP | VP MOD VP | VP MOD ADV VP | VP MOD VP ADV | ADV VP ADV VP ADV
+
+VP -> V | V NP | MOD V NP | DET V NP | ADV V NP | DET ADV V NP | MOD ADV V NP | V MOD ADV PP NP
+
+PP -> PP1 | PP-PP | IN DET N V ADJ
+
+PP-PP -> PP1 DET PP1 | PP1 MOD PP
+
+PP1 -> IN NP | MOD IN NP
+
+NP-NP -> NP DET NP | NP ADJ NP | NP DET ADJ NP
+
+NP -> N | ADJ N | DET N | DET ADJ N
+
+ADJ -> ADJ1 | ADJ-ADJ
+
+ADJ-ADJ -> ADJ1 DET ADJ1
+
+ADV -> ADV1 | ADV-ADV
+
+ADV-ADV -> ADV1 DET ADV1
+
+MOD -> MOD1 | MOD-MOD
+
+MOD-MOD -> MOD1 DET MOD1
+
+N -> N1 | N-N
+
+N-N -> N1 DET N1 | N1 DET DET N1
+
+NUM -> NUM1 | NUM-NUM | NUM1 NUM-NUM
+
+NUM-NUM -> NUM1 NUM1 | NUM1 DET NUM1
+
+V -> V1 | V-V
+
+V-V -> V DET V
+
+ADJ1 -> "jj"
+ADV1 -> "rb" | "wrb"
+DET -> "dt" | "cc" | "rp" | "ex" | "wdt" | "pdt"
+IN -> "in" | "to"
+N1 -> "pr" | "nn" | "wp" | "pos"
+MOD1 -> "md"
+NUM1 -> "sym" | "fw" | "uh" | "ls" | "cd"
+V1 -> "vb"

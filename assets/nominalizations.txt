@@ -188,6 +188,7 @@ corral
 corrupting
 cough
 coughing
+counsel
 counseling
 count
 counterattack
