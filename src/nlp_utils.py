@@ -1,18 +1,21 @@
 from __future__ import print_function
-from nltk.corpus import stopwords  #from nltk import tokenize
-#from nltk.corpus.reader.plaintext import PlaintextCorpusReader
+from nltk.corpus import stopwords
 from nltk.probability import FreqDist
 import logging
-#import os
-#import sys
 import string
-#import re
-
-itrchgbl = [['i','you','he','she','we'],['is','are','was'],['i\'ve','he\'s','you\'re','she\'s','we\'ve'],['am','is']]
-
-stopList = stopwords.words( "english" ) + list(string.punctuation) + [e for ls in itrchgbl for e in ls]
+import re
 
 clicheBlacklist = ['a','an','am','he','his','her','our','i','my','the','they','she','you','your']
+
+stopList = stopwords.words( "english" ) + list(string.punctuation)
+
+rePosList = [r'NN.*', r'VB.*', r'PR.*', r'JJ.*', r'RB.*', r'WP.*']
+
+weights = {}
+with open('../assets/weights.txt') as file:
+    for line in file:
+        (pos, w) = line.split(':')
+        weights[pos.strip()] = float(w)*5.0
 
 def getNGrams(tokens, n):
     thengrams = []
@@ -24,11 +27,11 @@ def getNGrams(tokens, n):
         i = i + 1
     return thengrams
 
-def interchangeable( word1, word2 ):
-    for ls in itrchgbl:
-        if word1 in ls and word2 in ls:
-            return True
-    return False
+def normPos(pos):
+    for exp in rePosList:
+        if re.match(exp, pos):
+            return pos[:2]
+    return pos
 
 def openFileReturnString( fileName ):
     filePtr = open( fileName )
@@ -74,6 +77,22 @@ def removeRawPunct( rawStr ):
     rs = rawStr.translate(table, string.punctuation)
     return rs.strip()
 
+def binarySearch(needle, haystack):
+    end = len(haystack) - 1
+    mid = (end / 2) + 1
+    begin = 0
+    while end >= begin:
+        if needle == haystack[mid]:
+            return mid
+        else:
+            if needle < haystack[mid]:
+                end = mid - 1
+                mid = end - ((end - begin) / 2)
+            else:
+                begin = mid + 1
+                mid = begin + ((end - begin) / 2)
+    return None
+
 def clicheIntersection( ngram, cliche ):
     ret = []
 
@@ -90,29 +109,30 @@ def setIntersection( list1, list2 ):
 
 
 def iDist( wL1, wL2 ):
-    intLen1 = len(wL1)
-    intLen2 = len(wL2)
+    intLen1 = float(len(wL1))
+    intLen2 = float(len(wL2))
+    d = 0.0
     if intLen1 < intLen2:
         return iDist( wL2, wL1 )
     if intLen2 == 0 or intLen1 == 0:
-        print('error')
+        print('nlp_utils.iDist: error')
         return 0
     else:
-        d = intLen1 / intLen2
+        d = float(intLen1 / intLen2)
 
     freqCount1 = {}
     freqCount2 = {}
     for w in wL1:
         try:
-            freqCount1[w.lower()] += 1
+            freqCount1[w.lower()] += 1.0
         except:
-            freqCount1[w.lower()] = 1
+            freqCount1[w.lower()] = 1.0
 
     for w in wL2:
         try:
-            freqCount2[w.lower()] += 1
+            freqCount2[w.lower()] += 1.0
         except:
-            freqCount2[w.lower()] = 1
+            freqCount2[w.lower()] = 1.0
 
     rDist = 0.0
     nSet = setIntersection( wL1, wL2 )
@@ -129,3 +149,10 @@ def iDist( wL1, wL2 ):
 
     return rDist / (intLen1 + (intLen2 * d))
 
+def isPunct( tkn ):
+    tkn = tkn.strip()
+    if len(tkn) <= 2:
+        if any((c in tkn) for c in string.punctuation):
+            if not re.match(r'\w', tkn):
+                return True
+    return False

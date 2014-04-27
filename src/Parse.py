@@ -14,21 +14,37 @@ import string
 """
 
 def main():
-    nominal = nlp_utils.openFileReturnTokens( '../assets/nominalizations.txt' )
-    nomBlacklist = nlp_utils.openFileReturnTokens( '../assets/nominalBlacklist.txt' )
-
     assignments = {} # to contain 101 and 102 files
 
-    filePath = '../FYE-TEXT/102'
+    filePath = '../FYE-TEXT/Test'
     assignments = parseFolder( filePath )
+
+    for pid in assignments.iterkeys():
+        size = 0
+        para1 = ''
+        para1tags = ''
+        lasttkn = ''
+        lastpos = ''
+        for sent in assignments[pid].final.paras[0].sentences:
+            print sent.rawText
+            tags = ''
+            for tkn, pos in sent.taggedWords:
+                tags += pos + '  '
+            print tags
+            print sent.complexity, '\n'
+
+        print pid
+        print assignments[pid].final.getAvgComplexity()
+        print assignments[pid].draft.getAvgComplexity()
+        print '\n'
 
     #dCliches, fCliches = getCliches( assignments )
     #printCliches( assignments, dCliches, fCliches )
 
-    draftNominals, finalNominals = getNominals( assignments )
-    for pid in assignments.keys():
-        print draftNominals[pid]
-        print finalNominals[pid]
+    #draftNominals, finalNominals = getNominals( assignments )
+    #for pid in assignments.keys():
+    #    print draftNominals[pid]
+    #    print finalNominals[pid]
 
 def printCliches( assignmentDict, dClicheDict, fClicheDict ):
     maxlen = 80
@@ -162,10 +178,10 @@ def parseFolder( dirPath ):
     finalIdsSortedList = finalReader.fileids()
     draftIdsSortedList = draftReader.fileids()
 
-    for i in range(len(finalReader.fileids())):
-        pid = 'Paper ' + str(i)
-        final = finalReader.paras( finalIdsSortedList[i] )
-        draft = draftReader.paras( draftIdsSortedList[i] )
+    for pid in finalReader.fileids():
+#        pid = 'Paper ' + str(i)
+        final = finalReader.paras( pid ) #finalIdsSortedList[i] )
+        draft = draftReader.paras( pid ) #draftIdsSortedList[i] )
         assn = assignment( draft, final )
         assignments[pid] = assn
 

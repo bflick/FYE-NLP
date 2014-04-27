@@ -64,10 +64,9 @@ class paper( object ):
         cliches = nlp_utils.openFileReturnTokens('../assets/cliches.txt', delim='/')
         for i, p in enumerate( self.paras ):
             for j, s in enumerate(p.sentences ):
-                if not '"' in s.words:
-                    clicheAt = s.containsCliche( cliches )
-                    if clicheAt != -1:
-                        sentLocs.append( (i, j, clicheAt[0], clicheAt[1]) )
+                clicheAt = s.containsCliche( cliches )
+                if clicheAt != -1:
+                    sentLocs.append( (i, j, clicheAt[0], clicheAt[1]) )
         return sentLocs
 
     """
@@ -116,3 +115,14 @@ class paper( object ):
                             if s.taggedWords[k + 1][1] == 'IN':
                                 nomList.append( (i, j, k, s.taggedWords[k - 1][0] + ' ' + tkn + ' ' + s.taggedWords[k + 1][0]) )
         return nomList
+
+    def getAvgComplexity( self ):
+        totalComplexity = 0.0
+        avgComplexity = 0.0
+        numSents = 0.0
+        for p in self.paras:
+            for s in p.sentences:
+                totalComplexity += float(s.complexity)
+                numSents += 1.0
+        avgComplexity = totalComplexity / numSents
+        return avgComplexity

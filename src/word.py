@@ -51,12 +51,20 @@ class word( object ):
         return stem.lower()
 
     @staticmethod
-    def isNominal( word, nominal, nomBlacklist ):
+    def isNominal( word, nominals, nomBlacklist ):
         sufList = ['ion', 'ment', 'ness', 'ance', 'ity', 'ions', 'ments', 'ances', 'ities']
-        if word in nominal:
+        if word in nominals:
             return True
         if word not in nomBlacklist:
             for suf in sufList:
                 if word.endswith(suf):
                     return True
         return False
+
+    @staticmethod
+    def getWeight( taggedWord ):
+        weight = 0.0
+        pos = taggedWord[1]
+        if nlp_utils.weights.has_key(nlp_utils.normPos(pos)):
+            weight = nlp_utils.weights[nlp_utils.normPos(pos)]
+        return weight

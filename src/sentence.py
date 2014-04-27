@@ -7,22 +7,33 @@ from nltk.util import ngrams
 
 class sentence( object ):
 
-    logging.basicConfig(filename='../Sentence.log',level=logging.DEBUG)
+#    logging.basicConfig(filename='../Sentence.log',level=logging.DEBUG)
 
     """
         properties accessible in the form 'sentenceObject.property'
     """
     @property
+    def complexity( self ):
+        return self._complexity
+
+    @property
     def rawText( self ):
+        specialPunct = ['``','(']
+        lastChar = ''
         rawText = ''
-        rt_ind = 0
-        for tkn in self.words:
-            if any((c in tkn) for c in string.punctuation) or rt_ind == 0:
+        for tkn, pos in self.taggedWords:
+            if nlp_utils.isPunct( tkn ):
+                #since there was no space after last punct
+                #a space is added between last punct and begin quote/open-brace
+                if pos in specialPunct and nlp_utils.isPunct(lastChar):
+                    rawText += ' '
                 rawText += tkn
             else:
-                rawText += ' ' + tkn
-            rt_ind += 1
-        return rawText + ' '
+                if lastChar not in specialPunct:
+                   rawText += ' '
+                rawText += tkn
+            lastChar = tkn.strip()
+        return rawText
 
     @property
     def size( self ):
@@ -44,11 +55,14 @@ class sentence( object ):
         self.wordList = listOfTokens
         self.index = 0
         self._size = 0
+        self._complexity = 0.0
         self._taggedWords = []
         tgdWords = pos_tag( listOfTokens )
-        for w in tgdWords:
-            self._taggedWords.append( w )
+        for tkn, pos in tgdWords:
+            self._taggedWords.append((tkn, pos))
             self._size += 1
+            self._complexity += word.getWeight((tkn, pos))
+
     """
         Iterator:
         Allows for the objects use in a for each loop
@@ -95,6 +109,7 @@ class sentence( object ):
                 # otherwise the ngram may be missing one of the keywords
                 elif len(clicheKeywords) - 1 > len(intersect):
                      continue
+
                 cols = len(ngram) + 1
                 rows = len(cList) + 1
                 mat = [[0 for j in range(cols)] for i in range(rows)]
@@ -126,12 +141,11 @@ class sentence( object ):
         matrix = [[0 for j in range(cols)] for i in range(rows)]
 
         # not sure whether the range should start at 1 or not
-        for i in range(1, rows):
+        for i in range(rows):
             matrix[i][0] = i
-        for j in range(1, cols):
+        for j in range(cols):
             matrix[0][j] = j
-#        self.display( matrix )
-
+#        logging.debug(self.rawText+'\n'+other.rawText)
         for i in range(1, rows):
             for j in range(1, cols):
                 thisWord = word.getTaggedStem( self.taggedWords[j-1] )
@@ -145,10 +159,10 @@ class sentence( object ):
                     insertion = matrix[i][j-1] + 1
                     substitution = matrix[i-1][j-1] + 2
                     matrix[i][j] = min(insertion, deletion, substitution)
-#            logging.debug('\nAfter row '+str(i))
-#            self.display( matrix )
-        return matrix[rows - 1][cols - 1]
 
+#            logging.debug('\nAfter row '+str(i))
+#        self.display( matrix )
+        return matrix[-1][-1]
 
     def display( self, mat ):
         printString = ''
