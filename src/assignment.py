@@ -56,7 +56,6 @@ class assignment( object ) :
     """
     def customEditDist( self ):
         newWords = 0
-
         if len(self.final.paras) != len(self.draft.paras):
             print 'paragraph numbers differ\n'
 
@@ -64,11 +63,13 @@ class assignment( object ) :
             newWords += paraFin.wordDiff( paraDft )
         return newWords
 
-
-
-
-
-
+    """
+        draftFinalDist
+        @returns the text mining distance referred to in Cyril and Dominique Labbe`'s paper
+        'Duplicate and Fake Publications in Scientific Literature: How many SCIgen papers in Computer Science?'
+    """
+    def draftFinalDist(self):
+        return self.draft.interDiff(self.final)
 
 
 
