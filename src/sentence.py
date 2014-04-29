@@ -18,21 +18,24 @@ class sentence( object ):
 
     @property
     def rawText( self ):
-        specialPunct = ['``','(']
-        lastChar = ''
+        specialPunct = ["``",'(']
+        lastChar = ' '
+        lastPos = ' '
         rawText = ''
-        for tkn, pos in self.taggedWords:
-            if nlp_utils.isPunct( tkn ):
-                #since there was no space after last punct
-                #a space is added between last punct and begin quote/open-brace
-                if pos in specialPunct and nlp_utils.isPunct(lastChar):
-                    rawText += ' '
-                rawText += tkn
+        for i, (tkn, pos) in enumerate(self.taggedWords):
+            if pos in specialPunct:
+                rawText += ' ' + tkn
             else:
-                if lastChar not in specialPunct:
-                   rawText += ' '
+                if lastChar[-1] == "'" or lastChar[-1] == '-':
+                    rawText = rawText[:-1]
                 rawText += tkn
+                if i + 1 < len(self.words) and not nlp_utils.isPunct(self.words[i + 1]):
+                    if pos not in specialPunct:
+                        rawText += ' '
+
             lastChar = tkn.strip()
+
+        rawText += ' '
         return rawText
 
     @property
