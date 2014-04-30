@@ -3,20 +3,20 @@ from __future__ import division
 from nltk.corpus import stopwords
 from sentence import sentence
 from word import word
+import nlp_utils
 
-class paragraph( object ) :
+class paragraph(object):
 
-    similarityTolerance = 0.7
 
     """
         properties accessible in the form 'paraObject.property'
     """
     @property
-    def parent( self ):
+    def parent(self):
         return self.parentPaper
 
     @property
-    def rawText( self ):
+    def rawText(self):
         rawText = ''
         for s in self.sentenceList:
             rawText += s.rawText
@@ -24,41 +24,42 @@ class paragraph( object ) :
         return rawText
 
     @property
-    def sentences( self ):
+    def sentences(self):
         return self.sentenceList
 
     @property
-    def size( self ):
+    def size(self):
         return self.numSents
 
     @property
-    def topic( self ):
+    def topic(self):
         return self._topic
 
     @topic.setter
-    def topic( self, value ):
+    def topic(self, value):
         self._topic = value
 
     """
         Constructor:
         @param 'parent' - the paper object that owns the paragraph
+                         (I thought this would be useful to set thesis of the paper)
         @param 'sList' - a list of a list of tokens in the form:
                         [['Init', 'this', 'object','.']['Thank','you','.']]
     """
-    def __init__( self, parent, sList ):
+    def __init__(self, parent, sList):
         self.numSents = len(sList)
         self.parentPaper = parent
         self._topic = ''
         self.index = 0
         self.sentenceList = []
         for s in sList:
-            self.sentenceList.append( sentence(s) )
+            self.sentenceList.append(sentence(s))
 
     """
         Iterator:
         Allows for the objects use in a for each loop
     """
-    def __iter__( self ):
+    def __iter__(self):
         return self
 
     """
@@ -66,7 +67,7 @@ class paragraph( object ) :
         Necessary to access rawText in a for each loop
         implied call with in a for each loop
     """
-    def next( self ):
+    def next(self):
         ret = ''
         if self.index == len(self.sentenceList):
             raise StopIteration
@@ -78,44 +79,33 @@ class paragraph( object ) :
     """
         wordDiff
         @param 'other' - paper object with which to do comparison
-        @return number of edits made (substitution = deletion + insertion)
+        @return number of edits made (substitution = deletion + insertion) by word
     """
-    def wordDiff( self, other ):
-        if self.size < other.size:
-            return other.wordDiff( self )
-
-        offset = 0
-        wordsChanged = 0
-        for i in range(len( self.sentences )):
-            if i+offset >= self.size or i >= other.size:
-                break
-            sent = self.sentences[i+offset]
-            othSent = other.sentences[i]
-            if not self.contains( othSent.words ):
-                offset += 1
-            else:
-                wordsChanged += sent.wordDiff( othSent )
-
-        return wordsChanged
+    def wordDiff(self, other):
+        selfWords = [w for s in self.sentences for w in s.words]
+        othWords = [w for s in other.sentences for w in s.words]
+        return nlp_utils.wordDiff(selfWords, othWords)
 
     """
         contains
         @param 'needle' - a list of tokens (sentence) to search for
         @return True if the paragraph contains a similar sentence; False otherwise
     """
-    def contains( self, needle ):
+    def contains(self, needle):
         haystack = [sent.words for sent in self.sentences]
 
-        needle = nlp_utils.removeStopList( needle )
-        haystack = nlp_utils.removeStopList( needle )
+        needle = nlp_utils.removeStopList(needle)
+        haystack = nlp_utils.removeStopList(haystack)
         for sentence in haystack:
             matches = 0
             for tkn in sentence:
                 if tkn in needle:
                     matches += 1
-                if matches / len(sentence) > paragraph.similarityTolerance:
+                # makes use of __future__ import division
+                if matches / len(sentence) >= nlp_utils.similarityTolerance:
                     return True
         return False
+
 
 """
     def parse( self ) :

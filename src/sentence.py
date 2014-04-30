@@ -5,15 +5,13 @@ import logging
 import nlp_utils
 from nltk.util import ngrams
 
-class sentence( object ):
-
-#    logging.basicConfig(filename='../Sentence.log',level=logging.DEBUG)
+class sentence(object):
 
     """
         properties accessible in the form 'sentenceObject.property'
     """
     @property
-    def complexity( self ):
+    def complexity(self):
         return self._complexity
 
     @property
@@ -39,22 +37,22 @@ class sentence( object ):
         return rawText
 
     @property
-    def size( self ):
+    def size(self):
         return self._size
 
     @property
-    def taggedWords( self ):
+    def taggedWords(self):
         return self._taggedWords
 
     @property
-    def words( self ):
+    def words(self):
         return self.wordList
 
     """
         Constructor:
         @param 'listOfTokens' - a list of strings i.e. ['Rub','my','back','.']
     """
-    def __init__( self, listOfTokens ):
+    def __init__(self, listOfTokens):
         self.wordList = listOfTokens
         self.index = 0
         self._size = 0
@@ -66,11 +64,19 @@ class sentence( object ):
             self._size += 1
             self._complexity += word.getWeight((tkn, pos))
 
+
+    # sent == other is only meant to be used in 'paper.sentDiff()' function
+    def __eq__(self, other):
+        diff = self.wordDiff(other)
+        if 2 * diff / (other.size + self.size) <= 1 - nlp_utils.similarityTolerance:
+            return True
+        return False
+
     """
         Iterator:
         Allows for the objects use in a for each loop
     """
-    def __iter__( self ):
+    def __iter__(self):
         return self
 
     """
@@ -78,7 +84,7 @@ class sentence( object ):
         Necessary to access rawText in a for each loop
         implied call with in a for each loop
     """
-    def next( self ):
+    def next(self):
         ret = ''
         if self.index == len(self.words):
             raise StopIteration
@@ -93,15 +99,15 @@ class sentence( object ):
         @param clicheList - list to search the sentence for
         @return True if the cliche is contained; False otherwise
     """
-    def containsCliche( self, clicheList ):
-        wordList = nlp_utils.removeList( self.words, list(string.punctuation)+['s','t'] )
+    def containsCliche(self, clicheList):
+        wordList = nlp_utils.removeList(self.words, list(string.punctuation)+['s','t'])
         for c in clicheList:
             cList = c.split()
-            clicheKeywords = nlp_utils.removeList( cList, nlp_utils.clicheBlacklist )
-            nGramList = ngrams( wordList, len(cList) + 1 )
+            clicheKeywords = nlp_utils.removeList(cList, nlp_utils.clicheBlacklist)
+            nGramList = ngrams(wordList, len(cList) + 1)
 
             for n, ngram in enumerate(nGramList):
-                intersect = nlp_utils.clicheIntersection( ngram, clicheKeywords )
+                intersect = nlp_utils.clicheIntersection(ngram, clicheKeywords)
 
                 if len(cList) == 0:
                     continue
@@ -123,7 +129,7 @@ class sentence( object ):
 
                 for i in range(1, rows):
                     for j in range(1, cols):
-                        if word.getStem( ngram[j-1] ) == word.getStem( cList[i-1] ):
+                        if word.getStem(ngram[j-1]) == word.getStem(cList[i-1]):
                             mat[i][j] = mat[i-1][j-1]
                         else:
                             mat[i][j] = min(mat[i-1][j]+1, mat[i][j-1]+1, mat[i-1][j-1]+1)
@@ -131,51 +137,38 @@ class sentence( object ):
                 if mat[-1][-1] <= 2:
                     return n, c
 
-        return -1
+        return None
 
     """
         wordDiff
         @param 'other' - another sentence object
         @returns the number of words removed and added
     """
-    def wordDiff( self, other ):
-        cols = self.size + 1
-        rows = other.size + 1
+    def wordDiff(self, other):
+        selfWords = nlp_utils.removeListPunct(self.words)
+        othWords = nlp_utils.removeListPunct(other.words)
+        cols = len(selfWords) + 1
+        rows = len(othWords) + 1
         matrix = [[0 for j in range(cols)] for i in range(rows)]
-
-        # not sure whether the range should start at 1 or not
         for i in range(rows):
             matrix[i][0] = i
         for j in range(cols):
             matrix[0][j] = j
-#        logging.debug(self.rawText+'\n'+other.rawText)
         for i in range(1, rows):
             for j in range(1, cols):
-                thisWord = word.getTaggedStem( self.taggedWords[j-1] )
-                otherWord = word.getTaggedStem( other.taggedWords[i-1] )
-#                logging.info('comparing '+thisWord+' and '+otherWord)
+                thisWord = word.getStem( selfWords[j-1] )
+                otherWord = word.getStem( othWords[i-1] )
                 if thisWord == otherWord:
                     matrix[i][j] = matrix[i-1][j-1]
                 else:
-#                    logging.debug(thisWord+' is not '+otherWord)
                     deletion = matrix[i-1][j] + 1
                     insertion = matrix[i][j-1] + 1
                     substitution = matrix[i-1][j-1] + 2
                     matrix[i][j] = min(insertion, deletion, substitution)
 
-#            logging.debug('\nAfter row '+str(i))
-#        self.display( matrix )
         return matrix[-1][-1]
 
-    def display( self, mat ):
-        printString = ''
-        for row in range(len(mat)):
-                printString += '  ' + ' '.join(str(mat[row])) + '\n'
-        logging.debug('\n' + printString + '\n')
-
-
-
-    def isPassive( self ):
+    def isPassive(self):
         ret = False
         count = 0
         conjugates = ["be", "was", "were", "been", "is", "being", "are", "got", "gotten", "had gotten"]
@@ -197,5 +190,3 @@ class sentence( object ):
             ret = True
 
         return ret
-
-

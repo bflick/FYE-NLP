@@ -19,7 +19,7 @@ def main():
 
     filePath = '../FYE-TEXT/Test'
     assignments = parseFolder( filePath )
-        
+
     writeComplexity(assignments, '../complexityInfo.txt')
     writeFile(assignments, '../parsedInfo.txt')
 
@@ -109,9 +109,6 @@ def getHighlightPairs(paper, pid, locationDict):
             if needSpace(words[i]):
                 highlightEnd += 1
 
-        print pid, feature, para, sent, word
-        print paper.rawText[highlightStart:highlightEnd+1], '\n'
-
         highlightPairs.append((highlightStart, highlightEnd))
 
     return highlightPairs
@@ -121,7 +118,8 @@ def writeComplexity(assignmentDict, pathName):
             'draft|complexityPairs',
             'final|complexityPairs',
             'draft|avgComplexity',
-            'final|avgComplexity']
+            'final|avgComplexity',
+             'wordDifference']
 
     paperComplexity = dict()
     for pid, a in assignmentDict.items():
@@ -129,17 +127,22 @@ def writeComplexity(assignmentDict, pathName):
                                  keys[1] : list(),
                                  keys[2] : list(),
                                  keys[3] : a.draft.getAvgComplexity(),
-                                 keys[4] : a.final.getAvgComplexity() }
+                                 keys[4] : a.final.getAvgComplexity(),
+                                 keys[5] : a.numEdits }
+        sentNum = 0
         for p in a.draft.paras:
-            for i, s in enumerate(p.sentences):
-                paperComplexity[pid][keys[1]].append((i, s.complexity))
+            for s in p.sentences:
+                paperComplexity[pid][keys[1]].append((sentNum, s.complexity))
+                sentNum += 1
+        sentNum = 0
         for p in a.final.paras:
-            for i, s in enumerate(p.sentences):
-                paperComplexity[pid][keys[2]].append((i, s.complexity))
+            for s in p.sentences:
+                paperComplexity[pid][keys[2]].append((sentNum, s.complexity))
+                sentNum += 1
 
     ffile = open(pathName, 'w')
     for pid in paperComplexity.iterkeys():
-        ffile.write(pid + '\n')
+        ffile.write('>>>>>' + pid + '\n')
         ffile.write(keys[0] + ': ' + str(paperComplexity[pid][keys[0]]) + '\n')
         ffile.write(keys[1] + ': ' )
         for pair in paperComplexity[pid][keys[1]]:
@@ -150,16 +153,12 @@ def writeComplexity(assignmentDict, pathName):
         ffile.write('\n')
         ffile.write(keys[3] + ': ' + str(paperComplexity[pid][keys[3]]) + '\n')
         ffile.write(keys[4] + ': ' + str(paperComplexity[pid][keys[4]]) + '\n')
-
     ffile.close()
 
 def writeFile(assignmentDict, pathName):
     (draftNominals, finalNominals) = getNominals(assignmentDict)
     (draftCliches, finalCliches) = getCliches(assignmentDict)
     (draftPassives, finalPassives) = getPassives(assignmentDict)
-#    nlp_utils.printDict('draftNominals', draftNominals)
-#    nlp_utils.printDict('draftCliches', draftCliches)
-#    nlp_utils.printDict('draftPassives', draftPassives)
     highlightPairs = dict()
     for pid in assignmentDict.iterkeys():
         highlightPairs[pid + '(draft nominals)'] = getHighlightPairs(assignmentDict[pid].draft, pid, draftNominals)
@@ -169,27 +168,21 @@ def writeFile(assignmentDict, pathName):
         highlightPairs[pid + '(final cliches)'] =  getHighlightPairs(assignmentDict[pid].final, pid, finalCliches)
         highlightPairs[pid + '(final passives)'] = getHighlightPairs(assignmentDict[pid].final, pid, finalPassives)
 
-#    nlp_utils.printDict('highlights', highlightPairs) #<<<<<<<<<<<
-
     ffile = open(pathName, 'w')
     for pid in assignmentDict.iterkeys():
-        ffile.write(pid + 'draft\n')
+        ffile.write('>>>>>' + pid + ' draft\n')
         ffile.write('\ncliches ')
         for i, pair in enumerate(highlightPairs[pid + '(draft cliches)']):
-#            print pid, draftCliches[pid][i][3]
-#            print assignmentDict[pid].draft.rawText[pair[0]:pair[1]]
             ffile.write(str(pair) + ' ')
         ffile.write('\nnominals ')
         for pair in highlightPairs[pid + '(draft nominals)']:
             ffile.write(str(pair) + ' ')
         ffile.write('\npassives ')
         for i, pair in enumerate(highlightPairs[pid + '(draft passives)']):
-#            print pid, draftPassives[pid][i][3]
-#            print assignmentDict[pid].draft.rawText[pair[0]:pair[1]], '\n'
             ffile.write(str(pair) + ' ')
         ffile.write('\n' + assignmentDict[pid].draft.rawText + '\n\n')
         
-        ffile.write(pid + 'final\n')
+        ffile.write('>>>>>' + pid + ' final\n')
         ffile.write('\ncliches ')
         for pair in highlightPairs[pid + '(final cliches)']:
             ffile.write(str(pair) + ' ')

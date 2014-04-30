@@ -29,10 +29,10 @@ import nlp_utils
     }
 """
 
-class word( object ):
+class word(object):
 
     @staticmethod
-    def getTaggedStem( taggedWord ):
+    def getTaggedStem(taggedWord):
         pStem = PorterStemmer()
         stem = ''
         if isinstance(taggedWord, tuple):
@@ -42,7 +42,7 @@ class word( object ):
 
 
     @staticmethod
-    def getStem( word ):
+    def getStem(word):
         pStem = PorterStemmer()
         stem = ''
         if isinstance(word, str):
@@ -50,19 +50,25 @@ class word( object ):
         stem = stem.replace('\'','')
         return stem.lower()
 
+    """
+        isNominal
+        @param word is the word in question
+        @param nominals is a list of non-derivational nominals
+        @param nomBlacklist is the list of words with suffixes, but are not nominalizations
+    """
     @staticmethod
-    def isNominal( word, nominals, nomBlacklist ):
+    def isNominal(word, nominals, nomBlacklist):
         sufList = ['ion', 'ment', 'ness', 'ance', 'ity', 'ions', 'ments', 'ances', 'ities']
-        if word in nominals:
+        if nlp_utils.binarySearch(word, nominals) != None:
             return True
-        if word not in nomBlacklist:
+        if nlp_utils.binarySearch(word, nomBlacklist) == None:
             for suf in sufList:
                 if word.endswith(suf):
                     return True
         return False
 
     @staticmethod
-    def getWeight( taggedWord ):
+    def getWeight(taggedWord):
         weight = 0.0
         pos = taggedWord[1]
         if nlp_utils.weights.has_key(nlp_utils.normPos(pos)):

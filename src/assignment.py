@@ -1,36 +1,37 @@
 from paper import paper
+import nlp_utils
 
-class assignment( object ) :
+class assignment(object) :
 
     """
         properties accessible in the form 'assignmentObject.property'
     """
     @property
-    def draft( self ):
+    def draft(self):
         return self.draftPaper
 
     @property
-    def final( self ):
+    def final(self):
         return self.finalPaper
 
     @property
-    def numEdits( self ):
-        return self.customEditDist()
+    def numEdits(self):
+        return self.wordDifference()
 
     @property
-    def score( self ):
+    def score(self):
         return self._score
 
     @property
-    def thesis( self ):
+    def thesis(self):
         return self._thesis
 
     @score.setter
-    def score( self, val ):
+    def score(self, val):
         self._score = val
 
     @thesis.setter
-    def thesis( self, ths ):
+    def thesis(self, ths):
         self._thesis = ths
 
     """
@@ -38,30 +39,24 @@ class assignment( object ) :
         @param 'draft' - a list of lists of lists of tokens i.e. a list of paragraphs
         @param 'final' - same as above
     """
-    def __init__( self, draft, final ):
-        self.draftPaper = paper( draft )
-        self.finalPaper = paper( final )
+    def __init__(self, draft, final):
+        self.draftPaper = paper(draft)
+        self.finalPaper = paper(final)
         self._score = 'unscored'
 
     """
         doDiff
         @returns - number of character edits
     """
-    def doDiff( self ):
-        return self.final.doDiff( self.draft )
+    def doDiff(self):
+        return self.final.doDiff(self.draft)
 
     """
         customEditDist
         @returns - number of word edits
     """
-    def customEditDist( self ):
-        newWords = 0
-        if len(self.final.paras) != len(self.draft.paras):
-            print 'paragraph numbers differ\n'
-
-        for paraFin, paraDft in zip(self.final.paras, self.draft.paras):
-            newWords += paraFin.wordDiff( paraDft )
-        return newWords
+    def wordDifference(self):
+        return nlp_utils.wordDiff(self.final.getWords(), self.draft.getWords())
 
     """
         draftFinalDist
@@ -69,8 +64,4 @@ class assignment( object ) :
         'Duplicate and Fake Publications in Scientific Literature: How many SCIgen papers in Computer Science?'
     """
     def draftFinalDist(self):
-        return self.draft.interDiff(self.final)
-
-
-
-
+        return nlp_utils.iDist(self.draft.getWords(), self.final.getWords())
