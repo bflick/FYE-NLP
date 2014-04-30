@@ -91,20 +91,23 @@ class paragraph(object):
         @return True if the paragraph contains a similar sentence; False otherwise
     """
     def contains(self, needle):
-        haystack = [sent.words for sent in self.sentences]
+        haystack = self.sentences
 
         needle = nlp_utils.removeStopList(needle)
+        haystack = [[w.lower() for w in s.words] for s in haystack]
+        needle = [w.lower() for w in needle]
         haystack = nlp_utils.removeStopList(haystack)
+
         for sentence in haystack:
             matches = 0
             for tkn in sentence:
                 if tkn in needle:
                     matches += 1
-                # makes use of __future__ import division
-                if matches / len(sentence) >= nlp_utils.similarityTolerance:
-                    return True
-        return False
 
+            if float(matches) / float(self.size) >= nlp_utils.similarityTolerance:
+                return True
+
+        return False
 
 """
     def parse( self ) :

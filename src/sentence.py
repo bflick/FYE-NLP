@@ -24,7 +24,7 @@ class sentence(object):
             if pos in specialPunct:
                 rawText += ' ' + tkn
             else:
-                if lastChar[-1] == "'" or lastChar[-1] == '-':
+                if (lastChar[-1] == "'" or lastChar[-1] == '-') and len(tkn) > 2:
                     rawText = rawText[:-1]
                 rawText += tkn
                 if i + 1 < len(self.words) and not nlp_utils.isPunct(self.words[i + 1]):

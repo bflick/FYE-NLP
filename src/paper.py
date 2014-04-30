@@ -91,15 +91,21 @@ class paper(object):
         @param 'other' - another paper object
         @return integer list of new sentences
     """
-    def findNewSents( self, other ):
-        newSentenceIndices = [] # list of tuples containing paragraph and sentence index
+    def findNewSents(self, other):
+        newSentences = []
+        containedSentences = [] # list of tuples containing paragraph and sentence index
         for p1 in self.paras:
             for i, p2 in enumerate(other.paras):
                 for j, s2 in enumerate(p2.sentences):
-                    if not p1.contains(s2):
-                        newSentenceIndices.append((i, j))
+                    if p1.contains(s2):
+                        containedSentences.append((i, j))
 
-        return newSentenceIndices
+        for i, p in enumerate(other.paras):
+            for j, s in enumerate(p.sentences):
+                if (i, j) not in containedSentences:
+                    newSentences.append((i, j))
+
+        return newSentences
 
     """
         findNominalizations

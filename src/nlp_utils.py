@@ -173,7 +173,9 @@ def wordDiff(wl1, wl2):
         matrix[0][j] = j
     for i in range(1, rows):
         for j in range(1, cols):
-            if word.word.getStem(wl1[j - 1]) == word.word.getStem(wl2[i - 1]):
+            w1 = word.word.getStem(wl1[j - 1]).lower()
+            w2 = word.word.getStem(wl2[i - 1]).lower()
+            if w1 == w2:
                 matrix[i][j] = matrix[i-1][j-1]
             else:
                 deletion = matrix[i-1][j] + 1

@@ -60,8 +60,15 @@ class assignment(object) :
 
     """
         draftFinalDist
-        @returns the text mining distance referred to in Cyril and Dominique Labbe`'s paper
+        @return the text mining distance referred to in Cyril and Dominique Labbe`'s paper
         'Duplicate and Fake Publications in Scientific Literature: How many SCIgen papers in Computer Science?'
     """
     def draftFinalDist(self):
         return nlp_utils.iDist(self.draft.getWords(), self.final.getWords())
+
+    """
+        getNewSents
+        @return a list of indexes of sentences in the final that do not appear in the draft
+    """
+    def getNewSents(self):
+        return self.draft.findNewSents(self.final)
