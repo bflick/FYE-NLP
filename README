@@ -1,1 +1,93 @@
 NLP Project - Sam Watson, Dr. Christopher Holcomb, Brian Flick, and Dr. Duncan Buell
+
+The main program should be run from 'Parse.py' this will write two files:
+
+     '../complexityInfo.txt' and '../parsedInfo.txt'
+
+Rather the gui will run this program to and parse the output files to provide info
+to the front end program. The classes within $FYE-Python/src are as follows.
+   
+    ****all @property functions accessible in the form 'object.property'****
+    
+Class assignment is the housing for a draft and a final by one student for a single
+writing assignment.
+class assignment:
+    @property
+    def draft(self):
+    @property
+    def final(self):
+    @property
+    def numEdits(self):
+
+    # text mining metric defined in Dominique and Cyril Labbe` paper
+    def draftFinalDist(self):
+
+Class house is a collection of paragraphs with the following functionality:
+class paper(object):
+    @property
+    def paras(self):
+    @property
+    def rawText(self):
+    @property
+    def size(self):
+
+    def getWords(self):
+
+    def findCliches(self):
+
+    def findPassives(self):
+
+    def findNewSents( self, other ):
+
+    def findNominalizations(self, nomList, nomBlacklist):
+
+    def sentDiff(self, other):
+
+    def getAvgComplexity( self ):
+
+The paragraph constructor takes arguments of parent(a paper
+to which the paragraph belongs), and nested list of words that represent the sentences.
+Iterable paragraph class returns the raw text of each sentence in a for each loop.
+class paragraph(object): 
+    @property
+    def rawText(self):
+    @property
+    def sentences(self):
+    @property
+    def size(self):
+
+    def wordDiff(self, other):
+
+    def contains(self, needle):
+
+The sentence constructor takes a list of tokens.
+An iterable class that returns each word in the sentence in a for each loop.
+class sentence(object):
+    @property
+    def complexity(self):
+    @property
+    def rawText( self ):
+    @property
+    def size(self):
+    @property
+    def taggedWords(self):
+    @property
+    def words(self):
+
+    def containsCliche( self, clicheList ):
+
+    def wordDiff(self, other):
+
+    def isPassive(self):
+
+Class word is a collection of static functions for making word features accessible.
+class word(object):
+
+    @staticmethod
+    def getTaggedStem(taggedWord):
+    @staticmethod
+    def getStem(word):
+    @staticmethod
+    def isNominal(word, nominals, nomBlacklist):
+    @staticmethod
+    def getWeight(taggedWord):

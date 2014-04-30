@@ -4,6 +4,7 @@ from nltk.probability import FreqDist
 import logging
 import string
 import re
+import word
 
 clicheBlacklist = ['a','an','am','he','his','her','our','i','my','the','they','she','you','your']
 
@@ -16,6 +17,8 @@ with open('../assets/weights.txt') as file:
     for line in file:
         (pos, w) = line.split(':')
         weights[pos.strip()] = float(w)*5.0
+
+similarityTolerance = 0.7
 
 def getNGrams(tokens, n):
     thengrams = []
@@ -79,18 +82,17 @@ def removeRawPunct( rawStr ):
 
 def binarySearch(needle, haystack):
     end = len(haystack) - 1
-    mid = (end / 2) + 1
+    mid = end / 2
     begin = 0
-    while end >= begin:
+    while begin <= end:
+        mid = (end + begin) / 2
         if needle == haystack[mid]:
             return mid
         else:
             if needle < haystack[mid]:
                 end = mid - 1
-                mid = end - ((end - begin) / 2)
             else:
                 begin = mid + 1
-                mid = begin + ((end - begin) / 2)
     return None
 
 def clicheIntersection( ngram, cliche ):
@@ -150,9 +152,34 @@ def iDist( wL1, wL2 ):
     return rDist / (intLen1 + (intLen2 * d))
 
 def isPunct( tkn ):
+    punct = list(string.punctuation)
+    punct.append('`')
     tkn = tkn.strip()
     if len(tkn) <= 2:
-        if any((c in tkn) for c in string.punctuation):
+        if any((c in tkn) for c in punct):
             if not re.match(r'\w', tkn):
                 return True
     return False
+
+def wordDiff(wl1, wl2):
+    wl1 = removeListPunct(wl1)
+    wl2 = removeListPunct(wl2)
+    cols = len(wl1) + 1
+    rows = len(wl2) + 1
+    matrix = [[0 for j in range(cols)] for i in range(rows)]
+    for i in range(rows):
+        matrix[i][0] = i
+    for j in range(cols):
+        matrix[0][j] = j
+    for i in range(1, rows):
+        for j in range(1, cols):
+            if word.word.getStem(wl1[j - 1]) == word.word.getStem(wl2[i - 1]):
+                matrix[i][j] = matrix[i-1][j-1]
+            else:
+                deletion = matrix[i-1][j] + 1
+                insertion = matrix[i][j-1] + 1
+                substitution = matrix[i-1][j-1] + 2
+                matrix[i][j] = min(insertion, deletion, substitution)
+
+    return matrix[-1][-1]
+
