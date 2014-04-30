@@ -7,7 +7,6 @@ import nlp_utils
 
 class paragraph(object):
 
-
     """
         properties accessible in the form 'paraObject.property'
     """
