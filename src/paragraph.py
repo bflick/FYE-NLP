@@ -88,26 +88,18 @@ class paragraph(object):
     """
         contains
         @param 'needle' - a list of tokens (sentence) to search for
+        @param 'lastMatchIdx' - is the index at which to start the search in self.sentences
         @return True if the paragraph contains a similar sentence; False otherwise
     """
-    def contains(self, needle):
-        haystack = self.sentences
+    def contains(self, needle, lastMatchIdx):
+        haystack = self.sentences[lastMatchIdx:]
+        for i, sent in enumerate(haystack):
+            wDiff =  nlp_utils.wordDiff(sent.words, needle.words)
+            percentDiff = (sent.size - wDiff) / (0.5 * (sent.size + needle.size))
+            if percentDiff >= nlp_utils.similarityTolerance:
+                return lastMatchIdx + i
 
-        needle = nlp_utils.removeStopList(needle)
-        haystack = [[w.lower() for w in s.words] for s in haystack]
-        needle = [w.lower() for w in needle]
-        haystack = nlp_utils.removeStopList(haystack)
-
-        for sentence in haystack:
-            matches = 0
-            for tkn in sentence:
-                if tkn in needle:
-                    matches += 1
-
-            if float(matches) / float(self.size) >= nlp_utils.similarityTolerance:
-                return True
-
-        return False
+        return -1
 
 """
     def parse( self ) :

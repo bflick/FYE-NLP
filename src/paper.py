@@ -92,13 +92,21 @@ class paper(object):
         @return integer list of new sentences
     """
     def findNewSents(self, other):
+        lastMatch = 0
         newSentences = []
         containedSentences = [] # list of tuples containing paragraph and sentence index
-        for p1 in self.paras:
-            for i, p2 in enumerate(other.paras):
-                for j, s2 in enumerate(p2.sentences):
-                    if p1.contains(s2):
-                        containedSentences.append((i, j))
+        for i, p1 in enumerate(self.paras):
+            matched = False
+            for j, p2 in enumerate(other.paras):
+                for k, s2 in enumerate(p2.sentences):
+                    foundAt = p1.contains(s2, lastMatch)
+                    if foundAt != -1:
+                        containedSentences.append((j, k))
+                        matched = True
+                        lastMatch = foundAt
+                        break
+            if matched:
+                break
 
         for i, p in enumerate(other.paras):
             for j, s in enumerate(p.sentences):

@@ -75,7 +75,7 @@ def removeListPunct( text ):
 def removeStopList( text ):
     return removeList( text, stopList )
 
-def removeRawPunct( rawStr ):
+def removeRawPunct(rawStr):
     table = string.maketrans("","")
     rs = rawStr.translate(table, string.punctuation)
     return rs.strip()
@@ -164,24 +164,53 @@ def isPunct( tkn ):
 def wordDiff(wl1, wl2):
     wl1 = removeListPunct(wl1)
     wl2 = removeListPunct(wl2)
+
+    if wl1 == wl2:
+        return 0
+    if len(wl1) == 0:
+        return len(wl2)
+    if len(wl2) == 0:
+        return len(wl1)
+
+    m1 = [i for i in xrange(0, len(wl1) + 1)]
+    m2 = [0 for i in xrange(0, len(wl1) + 1)]
+
+    for i in xrange(0, len(wl2)):
+        m2[0] = i + 1
+        for j in xrange(0, len(wl1)):
+            w1 = word.word.getStem(wl1[j - 1]).lower()
+            w2 = word.word.getStem(wl2[i - 1]).lower()
+            w1 = removeRawPunct(w1)
+            w2 = removeRawPunct(w2)
+            c = 0
+            if w1 != w2:
+                c = 1
+            m2[j + 1] = min(m2[j] + 1, m1[j+1] + 1, m1[j] + c)
+        
+        for j in xrange(0, len(m1)):
+            m1[j] = j
+
+    return m2[len(wl1)]
+
+"""    wl1 = removeListPunct(wl1)
+    wl2 = removeListPunct(wl2)
     cols = len(wl1) + 1
     rows = len(wl2) + 1
     matrix = [[0 for j in range(cols)] for i in range(rows)]
-    for i in range(rows):
+    for i in xrange(rows):
         matrix[i][0] = i
-    for j in range(cols):
+    for j in xrange(cols):
         matrix[0][j] = j
-    for i in range(1, rows):
-        for j in range(1, cols):
+    for i in xrange(1, rows):
+        for j in xrange(1, cols):
             w1 = word.word.getStem(wl1[j - 1]).lower()
             w2 = word.word.getStem(wl2[i - 1]).lower()
-            if w1 == w2:
+            if removeRawPunct(w1) == removeRawPunct(w2):
                 matrix[i][j] = matrix[i-1][j-1]
             else:
                 deletion = matrix[i-1][j] + 1
                 insertion = matrix[i][j-1] + 1
                 substitution = matrix[i-1][j-1] + 2
                 matrix[i][j] = min(insertion, deletion, substitution)
-
     return matrix[-1][-1]
-
+"""

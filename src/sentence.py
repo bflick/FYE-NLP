@@ -24,7 +24,7 @@ class sentence(object):
             if pos in specialPunct:
                 rawText += ' ' + tkn
             else:
-                if (lastChar[-1] == "'" or lastChar[-1] == '-') and len(tkn) > 2:
+                if lastChar[-1] in ["'", '-'] and len(tkn) <= 2:
                     rawText = rawText[:-1]
                 rawText += tkn
                 if i + 1 < len(self.words) and not nlp_utils.isPunct(self.words[i + 1]):
@@ -140,9 +140,10 @@ class sentence(object):
         return None
 
     """
-        wordDiff
+        wordDiff !!! I have kept this here for reference, Levenshtein Algorithm
+                 !!! is in the nlp_utils.py file
         @param 'other' - another sentence object
-        @returns the number of words removed and added
+        @return the number of words removed and added
     """
     def wordDiff(self, other):
         selfWords = nlp_utils.removeListPunct(self.words)
@@ -168,6 +169,10 @@ class sentence(object):
 
         return matrix[-1][-1]
 
+    """
+        isPassive
+        @return True 
+    """
     def isPassive(self):
         ret = False
         count = 0
