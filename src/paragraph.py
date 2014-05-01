@@ -1,9 +1,9 @@
-#from nltk import tokenize
 from __future__ import division
 from nltk.corpus import stopwords
 from sentence import sentence
 from word import word
 import nlp_utils
+import sys
 
 class paragraph(object):
 
@@ -87,17 +87,23 @@ class paragraph(object):
 
     """
         contains
-        @param 'needle' - a list of tokens (sentence) to search for
-        @param 'lastMatchIdx' - is the index at which to start the search in self.sentences
+        @param 'needle' - a sentence to search for
+        @param 'begin' - is the index at which to start the search in self.sentences
         @return True if the paragraph contains a similar sentence; False otherwise
     """
-    def contains(self, needle, lastMatchIdx):
-        haystack = self.sentences[lastMatchIdx:]
-        for i, sent in enumerate(haystack):
+    def contains(self, needle, begin):
+        if begin >= len(self.sentences):
+            print 'error paragraph.contains beginning index out of range'
+            sys.exit(1)
+
+        haystack = self.sentences[begin:]
+        for i in xrange(0, len(haystack)):
+            sent = haystack[i]
             wDiff =  nlp_utils.wordDiff(sent.words, needle.words)
+            # makes use of __future__ import division
             percentDiff = (sent.size - wDiff) / (0.5 * (sent.size + needle.size))
             if percentDiff >= nlp_utils.similarityTolerance:
-                return lastMatchIdx + i
+                return begin + i
 
         return -1
 

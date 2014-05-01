@@ -19,15 +19,15 @@ def main():
 
     filePath = '../FYE-TEXT/102'
     assignments = parseFolder( filePath )
-#    for pid in assignments.iterkeys():
-#        newSents = assignments[pid].getNewSents()
-#        for para, sent in newSents:
-#            print pid
-#            print assignments[pid].final.paras[para].sentences[sent].rawText, '\n'
-#       break
+    for pid in assignments.iterkeys():
+        newSents = assignments[pid].getNewSents()
+        for para, sent in newSents:
+            print pid
+            print assignments[pid].final.paras[para].sentences[sent].rawText, '\n'
+        break
 
-    writeComplexity(assignments, '../complexityInfo.txt')
-    writeFile(assignments, '../parsedInfo.txt')
+#    writeComplexity(assignments, '../complexityInfo.txt')
+#    writeFile(assignments, '../parsedInfo.txt')
 
 def printCliches( assignmentDict, dClicheDict, fClicheDict ):
     maxlen = 80
@@ -102,6 +102,8 @@ def getHighlightPairs(paper, pid, locationDict):
             highlightStart += sum([len(paper.paras[para].sentences[i].rawText) for i in xrange(0, sent)])
 
         if word > 0:
+            #The sentence.rawText function isn't perfect, but this
+            #algorithm parallels it
             lastTkn = ' '
             for i in xrange(0, word):
                 if taggedWords[i][1] in specialPunct:
@@ -115,19 +117,23 @@ def getHighlightPairs(paper, pid, locationDict):
                             highlightStart += 1
 
                 lastTkn = words[i].strip()
+        if word > 0:
+            highlightEnd = highlightStart
+            lastTkn = ' '
+            for i in xrange(word, word + len(featureList)):
+                if taggedWords[i][1] in specialPunct:
+                    highlightEnd += 1 + len(words[i])
+                else:
+                    if lastTkn[-1] in ["'", '-'] and len(words[i]) <= 2:
+                        highlightEnd -= 1
+                    highlightEnd += len(words[i])
+                    if i + 1 < len(words) and not nlp_utils.isPunct(words[i + 1]):
+                        if taggedWords[i] not in specialPunct:
+                            highlightEnd += 1
 
-        highlightEnd = highlightStart
-        for i in xrange(word, word + len(featureList)):
-            if taggedWords[i][1] in specialPunct:
-                highlightEnd += 1 + len(words[i])
-            else:
-                if lastTkn[-1] in ["'", '-'] and len(words[i]) <= 2:
-                    highlightEnd -= 1
-                highlightEnd += len(words[i])
-                if i + 1 < len(words) and not nlp_utils.isPunct(words[i + 1]):
-                    if taggedWords[i] not in specialPunct:
-                        highlightEnd += 1
-
+                lastTkn = words[i].strip()
+        else:
+            highlightEnd = highlightStart + len(feature)
         highlightPairs.append((highlightStart, highlightEnd))
 
     return highlightPairs
