@@ -96,14 +96,16 @@ class paragraph(object):
             print 'error paragraph.contains beginning index out of range'
             sys.exit(1)
 
+#        print '*', needle.rawText
         haystack = self.sentences[begin:]
         for i in xrange(0, len(haystack)):
             sent = haystack[i]
             wDiff =  nlp_utils.wordDiff(sent.words, needle.words)
             # makes use of __future__ import division
             percentDiff = (sent.size - wDiff) / (0.5 * (sent.size + needle.size))
+#            print wDiff, percentDiff, sent.rawText
             if percentDiff >= nlp_utils.similarityTolerance:
-                return begin + i
+                return i + begin
 
         return -1
 

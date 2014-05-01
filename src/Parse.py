@@ -19,15 +19,20 @@ def main():
 
     filePath = '../FYE-TEXT/102'
     assignments = parseFolder( filePath )
-    for pid in assignments.iterkeys():
-        newSents = assignments[pid].getNewSents()
-        for para, sent in newSents:
-            print pid
-            print assignments[pid].final.paras[para].sentences[sent].rawText, '\n'
-        break
 
-#    writeComplexity(assignments, '../complexityInfo.txt')
-#    writeFile(assignments, '../parsedInfo.txt')
+    writeComplexity(assignments, '../complexityInfo.txt')
+    writeFile(assignments, '../parsedInfo.txt')
+
+    # The runtime for this part is pretty rediculous,
+    # I think finding new sentences is less important
+    # especially when the word diff is already used
+#    for pid in assignments.iterkeys():
+#        print pid
+#        newSents = assignments[pid].getNewSents()
+#        for para, sent in newSents:
+#            print assignments[pid].final.paras[para].sentences[sent].rawText, '\n'
+
+#        print '\n\n'
 
 def printCliches( assignmentDict, dClicheDict, fClicheDict ):
     maxlen = 80
