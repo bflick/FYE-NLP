@@ -12,7 +12,7 @@ tags = ['SYM', ',', "'", '``', '.', '(', ')', ':',
         'SC', 'CC', 'DT', 'EX', 'IN',
         'JJ', 'MD', 'NN', 'PDT', 'POS', 'PRP',
         'RB', 'RP', 'TO', 'VB', 'WDT', 'WP', 'WRB',
-        '$', '--', 'LS', 'CD', 'FW', 'UH', '-NONE-']
+        '$', '--', 'LS', 'CD', 'FW', 'UH'] #, '-NONE-']
 
 """
 ment-ed, ment-ion, ment-ion-ing, ment-ion-ed
@@ -58,7 +58,7 @@ def createEncoding():
     encoding_size = 0
     encoding_mapping = {}
     for i in xrange(0, len(tags)):
-        encoding_mapping[(tags[i], tags[i], tags[i])] = i
+        encoding_mapping[(tags[i], True, tags[i])] = i
 #        encoding_mapping[('preceded_by_'+tags[i], tags[i], 'bi-tag')] = i + 1
 #        encoding_mapping[('preceded_by2x_'+tags[i], tags[i], 'tri-tag')] = i + 2
 
@@ -81,7 +81,7 @@ def createEncoding():
             splitted = ln.strip().split()
             for i, tAndP in enumerate(splitted):
                 (tkn, pos) = tuple(tAndP.split('_'))
-                features = {pos: pos}
+                features = { tag : False for tag in tags if tag != pos else True}
                 """'capitol': lambda x: True if tkn[0] in string.ascii_uppercase else False,
                 #'starting': lambda x: True if i==0  else False,
                 #'contains_punct': lambda x: True if any((c in tkn) for c in string.punctuation) else False,"""
@@ -103,7 +103,7 @@ def createEncoding():
                 """
                 train_toks.append((features, tkn.lower()))
                 sentCount += 1
-                if sentCount == 2500:
+                if sentCount == 5000:
                     break
 
     mehmmClassifier = mehmm.MaxentClassifier.train(train_toks, algorithm='GIS', encoding=mehmmEncoding, labels=encoding_labels)
