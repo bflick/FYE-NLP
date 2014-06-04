@@ -170,7 +170,8 @@ class sentence(object):
         return matrix[-1][-1]
 
     """
-        isPassive
+        isPassive - detects passive sentence based on whether or not a past participle was found within 2 
+        spaces of a determiner.
         @return True 
     """
     def isPassive(self):

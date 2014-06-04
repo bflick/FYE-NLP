@@ -1,5 +1,5 @@
 #! /usr/bin/python
-
+from matplotlib.lines import Line2D
 from nltk.corpus.reader.plaintext import PlaintextCorpusReader
 from nltk import tokenize
 from assignment import assignment
@@ -13,15 +13,23 @@ import string
 """
     First Year English - Natural Language Processing
 """
+PARSED_FP = '..'+ os.sep + 'parsedInfo.txt'
+COMPLEX_FP = '..'+ os.sep + 'complexityInfo.txt'
+CLICHE_FP = '..'+ os.sep + 'clicheInfo.txt'
+
 
 def main():
-    assignments = {} # to contain 101 and 102 files
 
-    filePath = '../FYE-TEXT/102'
+    if len(sys.argv) == 2:
+        filePath = sys.argv[1]
+    else:
+        filePath = '..'+os.sep+ 'FYE-TEXT' +os.sep+ '102'
+
+    assignments = {} # to contain 101 and 102 files
     assignments = parseFolder( filePath )
 
-    writeComplexity(assignments, '../complexityInfo.txt')
-    writeFile(assignments, '../parsedInfo.txt')
+    writeComplexity(assignments, COMPLEX_FP)
+    writeFile(assignments, PARSED_FP)
 
     # The runtime for this part is pretty rediculous,
     # I think finding new sentences is less important
@@ -34,14 +42,15 @@ def main():
 
 #        print '\n\n'
 
-def printCliches( assignmentDict, dClicheDict, fClicheDict ):
+def stringifyCliches(assignmentDict, ClicheDict, draftOrFinal):
+    ret = ''
     maxlen = 80
     lines = []
     b = list(string.punctuation) + ['t','s','ll']
     for pid, a in assignmentDict.items():
-        fCliches = fClicheDict[pid]
-        lines += [('Final ' + pid, '')]
-        for loc in fCliches:
+        Cliches = ClicheDict[pid]
+        lines += [('>>>>>' + pid.replace('final', draftOrFinal), '')]
+        for loc in Cliches:
             sent = a.final.paras[loc[0]].sentences[loc[1]].words
             foundAt = loc[2]
             width = 0
@@ -73,7 +82,7 @@ def printCliches( assignmentDict, dClicheDict, fClicheDict ):
                         cList = cList.split()
                         for tkn in cList:
                             if len(tkn) + cwid > maxlen:
-                                evenline += '\n' + tkn + ' '
+x                                evenline += '\n' + tkn + ' '
                                 cwid = 0
                             else:
                                 evenline += tkn + ' '
@@ -86,9 +95,20 @@ def printCliches( assignmentDict, dClicheDict, fClicheDict ):
         stutext = l[0].split('\n')
         cliche = l[1].split('\n')
         for i, t in enumerate(stutext):
-            print t
+            ret += t + '\n'
             if i < len(cliche):
-                print cliche[i]
+                ret +=  cliche[i] + '\n'
+    return ret
+
+
+def writeCliches(assignmentDict, fClicheDict, dClicheDict, filePath):
+    draftClicheString = stringifyCliches(assignmentDict, dClicheDict, 'draft')
+    finalClicheString = stringifyCliches(assignmentDict, fClicheDict, 'final')
+    ffile =  open(CLICHE_FP, 'w')
+    ffile.write(draftClicheString + '\n\n')
+    ffile.write(finalClicheString)
+    ffile.close()
+
 
 def getHighlightPairs(paper, pid, locationDict):
     specialPunct = ['``','(']
@@ -143,6 +163,13 @@ def getHighlightPairs(paper, pid, locationDict):
 
     return highlightPairs
 
+def readComplexity(filePath=COMPLEX_FP):
+    raw = ''
+    with open(filePath, 'r') as f:
+        raw = f.read()
+
+    
+
 def writeComplexity(assignmentDict, pathName):
     keys = ['interDistance',
             'draft|complexityPairs',
@@ -185,10 +212,14 @@ def writeComplexity(assignmentDict, pathName):
         ffile.write(keys[4] + ': ' + str(paperComplexity[pid][keys[4]]) + '\n')
     ffile.close()
 
+
 def writeFile(assignmentDict, pathName):
     (draftNominals, finalNominals) = getNominals(assignmentDict)
     (draftCliches, finalCliches) = getCliches(assignmentDict)
     (draftPassives, finalPassives) = getPassives(assignmentDict)
+
+    writeCliches(assignmentDict, draftCliches, finalCliches, CLICHE_FP)
+
     highlightPairs = dict()
     for pid in assignmentDict.iterkeys():
         highlightPairs[pid + '(draft nominals)'] = getHighlightPairs(assignmentDict[pid].draft, pid, draftNominals)
@@ -200,7 +231,8 @@ def writeFile(assignmentDict, pathName):
 
     ffile = open(pathName, 'w')
     for pid in assignmentDict.iterkeys():
-        ffile.write('>>>>>' + pid + ' draft\n')
+        draftId = pid.replace('final', 'draft')
+        ffile.write('>>>>>' + draftId + '\n')
         ffile.write('\ncliches ')
         for i, pair in enumerate(highlightPairs[pid + '(draft cliches)']):
             ffile.write(str(pair) + ' ')
@@ -211,8 +243,8 @@ def writeFile(assignmentDict, pathName):
         for i, pair in enumerate(highlightPairs[pid + '(draft passives)']):
             ffile.write(str(pair) + ' ')
         ffile.write('\n' + assignmentDict[pid].draft.rawText + '\n\n')
-        
-        ffile.write('>>>>>' + pid + ' final\n')
+
+        ffile.write('>>>>>' + pid + '\n')
         ffile.write('\ncliches ')
         for pair in highlightPairs[pid + '(final cliches)']:
             ffile.write(str(pair) + ' ')
@@ -225,11 +257,12 @@ def writeFile(assignmentDict, pathName):
         ffile.write('\n' + assignmentDict[pid].final.rawText + '\n\n')
     ffile.close()
 
+
 def getNominals( assignmentDict ):
     draftNoms = {}
     finalNoms = {}
-    nominal = nlp_utils.openFileReturnTokens( '../assets/nominalizations.txt' )
-    nomBlacklist = nlp_utils.openFileReturnTokens( '../assets/nominalBlacklist.txt' )
+    nominal = nlp_utils.openFileReturnTokens('..'+os.sep+'assets'+os.sep+'nominalizations.txt')
+    nomBlacklist = nlp_utils.openFileReturnTokens('..'+os.sep+'assets'+os.sep+'nominalBlacklist.txt')
     for pid, a in assignmentDict.items():
         draftNoms[pid] = []
         finalNoms[pid] = []
@@ -239,8 +272,8 @@ def getNominals( assignmentDict ):
         for para, sent, word, nominal in a.final.findNominalizations( nominal, nomBlacklist ):
             finalNoms[pid].append(( para, sent, word, nominal ))
 
-#    nlp_utils.printDict('label', draftNoms)
     return draftNoms, finalNoms
+
 
 """
     getCliches - finds the locations in each paper for passive voiced sentences
@@ -262,6 +295,7 @@ def getCliches( assignmentDict ):
 
     return draftCliches, finalCliches
 
+
 """
     getPassives - finds the locations in each paper for passive voiced sentences
     @param assignment list
@@ -281,6 +315,7 @@ def getPassives( assignmentDict ):
             finalPassives[pid].append(( loc[0], loc[1], 0, a.final.paras[loc[0]].sentences[loc[1]].rawText ))
 
     return draftPassives, finalPassives
+
 
 """
     parseFolder
