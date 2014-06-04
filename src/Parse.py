@@ -17,14 +17,15 @@ PARSED_FP = '..'+ os.sep + 'parsedInfo.txt'
 COMPLEX_FP = '..'+ os.sep + 'complexityInfo.txt'
 CLICHE_FP = '..'+ os.sep + 'clicheInfo.txt'
 
+keys = ['interDistance',
+        'draft|complexityPairs',
+        'final|complexityPairs',
+        'draft|avgComplexity',
+        'final|avgComplexity',
+        'wordDifference']
+
 
 def main():
-
-    if len(sys.argv) == 2:
-        filePath = sys.argv[1]
-    else:
-        filePath = '..'+os.sep+ 'FYE-TEXT' +os.sep+ '102'
-
     assignments = {} # to contain 101 and 102 files
     assignments = parseFolder( filePath )
 
@@ -43,14 +44,7 @@ def main():
 #        print '\n\n'
 
 
-def plotPairs(): #(x, y):
-    keys = ['interDistance',
-            'draft|complexityPairs',
-            'final|complexityPairs',
-            'draft|avgComplexity',
-            'final|avgComplexity',
-            'wordDifference']
-
+def plotPairs():
     f = open(COMPLEX_FP, 'r')
     complexity = pickle.load(f)
     f.close()
@@ -70,7 +64,7 @@ def plotPairs(): #(x, y):
         ax1.set_ylabel('sentence complexity')
         ax1.plot(xs, ys, c='r', label='sentence complexity')
         leg = ax1.legend()
-        fig.savefig('..' + os.sep + p_key + '_' + keys[1] + '.png')
+        fig.savefig('..' + os.sep + 'pngs' + os.sep + p_key + '_' + keys[1] + '.png')
 
         final_pairs = paper[keys[2]]
         xs = []
@@ -85,7 +79,7 @@ def plotPairs(): #(x, y):
         ax1.set_ylabel('sentence complexity')
         ax1.plot(xs, ys, c='r', label='sentence complexity')
         leg = ax1.legend()
-        fig.savefig('..' + os.sep + p_key + '_' + keys[2] + '.png')
+        fig.savefig('..' + os.sep + 'pngs' + os.sep + p_key + '_' + keys[2] + '.png')
 
 
 def stringifyCliches(assignmentDict, ClicheDict, draftOrFinal):
@@ -128,7 +122,7 @@ def stringifyCliches(assignmentDict, ClicheDict, draftOrFinal):
                         cList = cList.split()
                         for tkn in cList:
                             if len(tkn) + cwid > maxlen:
-x                                evenline += '\n' + tkn + ' '
+                                evenline += '\n' + tkn + ' '
                                 cwid = 0
                             else:
                                 evenline += tkn + ' '
@@ -208,16 +202,9 @@ def getHighlightPairs(paper, pid, locationDict):
         highlightPairs.append((highlightStart, highlightEnd))
 
     return highlightPairs
-    
+
 
 def writeComplexity(assignmentDict, pathName):
-    keys = ['interDistance',
-            'draft|complexityPairs',
-            'final|complexityPairs',
-            'draft|avgComplexity',
-            'final|avgComplexity',
-             'wordDifference']
-
     paperComplexity = dict()
     for pid, a in assignmentDict.items():
         paperComplexity[pid] = { keys[0] : a.draftFinalDist(),
@@ -238,7 +225,7 @@ def writeComplexity(assignmentDict, pathName):
                 sentNum += 1
 
     ffile = open(pathName, 'wb')
-    pickle.dump(complexity, pathName)
+    pickle.dump(paperComplexity, pathName)
     ffile.close()
 
 
@@ -374,4 +361,13 @@ def parseFolder( dirPath ):
 
 
 if __name__ == '__main__' :
-    main()
+    if len(sys.argv) == 2:
+        if sys.argv[1] == 'plot' and os.path.isfile(COMPLEX_FP):
+            plotPairs()
+        else:
+            filePath = sys.argv[1]
+            main()
+    else:
+        filePath = '..'+os.sep+'FYE-TEXT'+os.sep+'Test'
+        main()
+
