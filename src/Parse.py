@@ -42,6 +42,52 @@ def main():
 
 #        print '\n\n'
 
+
+def plotPairs(): #(x, y):
+    keys = ['interDistance',
+            'draft|complexityPairs',
+            'final|complexityPairs',
+            'draft|avgComplexity',
+            'final|avgComplexity',
+            'wordDifference']
+
+    f = open(COMPLEX_FP, 'r')
+    complexity = pickle.load(f)
+    f.close()
+    print type(complexity) is dict
+    for p_key in complexity.iterkeys():
+        paper = complexity[p_key]
+        print paper[keys[1]]
+        xs = []
+        ys = []
+        for x, y in paper[keys[1]]:
+            xs.append(x)
+            ys.append(y)
+        fig = plt.figure()
+        ax1 = fig.add_subplot(111)
+        ax1.set_title(keys[1])
+        ax1.set_xlabel('sentence position')
+        ax1.set_ylabel('sentence complexity')
+        ax1.plot(xs, ys, c='r', label='sentence complexity')
+        leg = ax1.legend()
+        fig.savefig('..' + os.sep + p_key + '_' + keys[1] + '.png')
+
+        final_pairs = paper[keys[2]]
+        xs = []
+        ys = []
+        for x, y in final_pairs:
+            xs.append(x)
+            ys.append(y)
+        fig = plt.figure()
+        ax1 = fig.add_subplot(111)
+        ax1.set_title(keys[1])
+        ax1.set_xlabel('sentence position')
+        ax1.set_ylabel('sentence complexity')
+        ax1.plot(xs, ys, c='r', label='sentence complexity')
+        leg = ax1.legend()
+        fig.savefig('..' + os.sep + p_key + '_' + keys[2] + '.png')
+
+
 def stringifyCliches(assignmentDict, ClicheDict, draftOrFinal):
     ret = ''
     maxlen = 80
@@ -162,12 +208,6 @@ def getHighlightPairs(paper, pid, locationDict):
         highlightPairs.append((highlightStart, highlightEnd))
 
     return highlightPairs
-
-def readComplexity(filePath=COMPLEX_FP):
-    raw = ''
-    with open(filePath, 'r') as f:
-        raw = f.read()
-
     
 
 def writeComplexity(assignmentDict, pathName):
@@ -197,19 +237,8 @@ def writeComplexity(assignmentDict, pathName):
                 paperComplexity[pid][keys[2]].append((sentNum, s.complexity))
                 sentNum += 1
 
-    ffile = open(pathName, 'w')
-    for pid in paperComplexity.iterkeys():
-        ffile.write('>>>>>' + pid + '\n')
-        ffile.write(keys[0] + ': ' + str(paperComplexity[pid][keys[0]]) + '\n')
-        ffile.write(keys[1] + ': ' )
-        for pair in paperComplexity[pid][keys[1]]:
-            ffile.write(str(pair) + ' ')
-        ffile.write('\n' + keys[2] + ' ')
-        for pair in paperComplexity[pid][keys[2]]:
-            ffile.write(str(pair) + ' ')
-        ffile.write('\n')
-        ffile.write(keys[3] + ': ' + str(paperComplexity[pid][keys[3]]) + '\n')
-        ffile.write(keys[4] + ': ' + str(paperComplexity[pid][keys[4]]) + '\n')
+    ffile = open(pathName, 'wb')
+    pickle.dump(complexity, pathName)
     ffile.close()
 
 
